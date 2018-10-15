@@ -1,11 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
-entity PC is
+entity PC2 is
 port(clk:in std_logic;
      AddressIn:in std_logic_vector(31 downto 0);
      AddressOut:out std_logic_vector(31 downto 0));
-end PC;
-architecture behav of PC is
+end PC2;
+architecture behav of PC2 is
 begin
 process(clk)
   variable temp:std_logic_vector(31 downto 0);
