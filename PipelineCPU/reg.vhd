@@ -10,7 +10,6 @@ entity reg is
     port(
         CLK: in std_logic;
         x: in std_logic_vector(n-1 downto 0);
-        write: in std_logic;
         y: out std_logic_vector(n-1 downto 0)
     );
 end reg;
@@ -21,7 +20,7 @@ begin
     -- Set mem to x if write enable and clock rising edge event
     process(CLK)
     begin
-        if CLK'event and CLK='1' and write='1' then
+        if CLK'event and CLK='1' then
             mem <= x;
         end if;
     end process;
