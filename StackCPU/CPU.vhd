@@ -59,7 +59,7 @@ end component;
 
 component registers is
   port(RR1,RR2,WR:in std_logic_vector(4 downto 0);
-       WD,WS:in std_logic_vector(31 downto 0); 
+       WD,WS:in std_logic_vector(31 downto 0);
        Clk,RegWrite:in std_logic;
 	StackOps: in std_logic_vector(1 downto 0);
        RD1,RD2:out std_logic_vector(31 downto 0));
@@ -71,7 +71,7 @@ port(Address:in std_logic_vector(31 downto 0);
 end component;
 
 component DataMemory is
-port(WriteData:in std_logic_vector(31 downto 0);
+port(MemWriteData:in std_logic_vector(31 downto 0);
 	Address:in std_logic_vector(31 downto 0);
 	MemRead,MemWrite,CLK:in std_logic;
 	StackOps:in std_logic_vector(1 downto 0);
@@ -97,47 +97,206 @@ port(x,y:in std_logic_vector (31 downto 0);
      z:out std_logic_vector(31 downto 0));
 end component;
 
-component MUX32_4 is 
+component MUX32_4 is
 port(w,v,x,y:in std_logic_vector (31 downto 0);
      sel:in std_logic_vector(1 downto 0);
      z:out std_logic_vector(31 downto 0));
 end component;
 
 --Declare Signals based on Single Cycle CPU
-signal instruction,A,C,D,E,F,G,H,J,K,L,M,N,P,Q,Y,X,V:std_logic_vector(31 downto 0);
-
-signal B:std_logic_vector(4 downto 0);
-signal R:std_logic;
-signal RegDst,Branch,MemRead,MemtoReg,MemWrite,ALUSrc,RegWrite,Jump,Zero,clk2:std_logic;
-signal ALUOp,StackOps:std_logic_vector(1 downto 0);
-signal operation: std_logic_vector(3 downto 0);
-signal four:std_logic_vector(31 downto 0):="00000000000000000000000000000100";
-signal neg_four:std_logic_vector(31 downto 0):="11111111111111111111111111111100";
+signal
+	Instruction,
+	PC,
+	RegisterData1,
+	RegisterData2,
+	SignExtendedImmediate,
+	ImmediateOrReg,
+	AluResult,
+	MemReadData,
+	MemWriteData,
+	ShiftedBranchOffset,
+	PCPlus4,
+	BranchAddress,
+	BranchOrPCPlus4,
+	NextPC,
+	JumpAddress,
+	SelectedAluSrc2,
+	MemWriteData,
+	MemAddress:
+std_logic_vector(31 downto 0);
+signal
+	SelectedWriteReg:
+std_logic_vector(4 downto 0);
+signal
+	BranchOpResult:
+std_logic;
+signal
+	RegDst,
+	Branch,
+	MemRead,
+	MemtoReg,
+	MemWrite,
+	ALUSrc,
+	RegWrite,
+	Jump,
+	Zero,
+	DelayedClock:
+std_logic;
+signal
+	ALUOp,
+	StackOps:
+std_logic_vector(1 downto 0);
+signal Operation:
+std_logic_vector(3 downto 0);
+signal four:
+std_logic_vector(31 downto 0):="00000000000000000000000000000100";
+signal neg_four:
+std_logic_vector(31 downto 0):="11111111111111111111111111111100";
 begin
 
-clk2<= clk after 1 ns;
+--Delayed clock
+DelayedClock<= clk after 1 ns;
 
---Start 
-PC1:PC port map(clk=>clk,AddressIn=>P,AddressOut=>A);
-InstMem: InstMemory port map(Address=>A,ReadData=>instruction);
-Add4: ALU32 port map(a=>A,b=>four,Oper=>"0010",Result=>L,Zero=>open,Overflow=>open);
-Control1: Control port map(Opcode=>instruction(31 downto 26),RegDst=>RegDst,Branch=>Branch,MemRead=>MemRead,MemtoReg=>MemtoReg,MemWrite=>MemWrite,ALUSrc=>ALUSrc,RegWrite=>RegWrite,Jump=>Jump,ALUOp=>ALUOp,StackOps=>StackOps);
-Mux1:mux5 port map(x=>instruction(20 downto 16),y=>instruction(15 downto 11),sel=>RegDst,z=>B);
-Register1:registers port map(RR1=>instruction(25 downto 21),RR2=>instruction(20 downto 16),WR=>B,WD=>J,RegWrite=>RegWrite,StackOps=>StackOps,Clk=>clk,RD1=>C,RD2=>D,WS=>G);
-SignExtend1:SignExtend port map(instruction(15 downto 0),E);
-Mux2:mux32 port map(D,E,ALUSrc,F);
-ALUControl1:ALUControl port map(ALUOp,instruction(5 downto 0),operation);
-ALU1:ALU32 port map(C,Y,operation,G,Zero,open);
-Shift1:ShiftLeft2 port map(E,K);
-AddALU:ALU32 port map(L,K,"0010",M,open,open);
-ShiftJump:ShiftLeft2Jump port map(L(31 downto 28),instruction(25 downto 0),Q);
-And1:And2 port map(Branch,Zero,R);
-Mux3:mux32 port map(L,M,R,N);
-DMemory:DataMemory port map(X,V,MemRead,MemWrite,clk2,StackOps,H);
-Mux4:mux32 port map(G,H,MemtoReg,J);
-Mux55:mux32 port map(N,Q,Jump,P);
-Mux6:mux32 port map(D,E,StackOps(0),X);
-Mux32_21:MUX32_2 port map(G,C,StackOps,V);
-Mux32_41:MUX32_4 port map(F,F,four,neg_four,StackOps,Y);
+--Start
+PC1:PC
+	port map(
+		clk=>clk,
+		AddressIn=>NextPC,
+		AddressOut=>PC);
+InstMem: InstMemory
+	port map(
+		Address=>PC,
+		ReadData=>Instruction);
+Add4: ALU32
+	port map(
+		a=>PC,
+		b=>four,
+		Oper=>"0010",
+		Result=>PCPlus4,
+		Zero=>open,
+		Overflow=>open);
+Control1: Control
+	port map(
+		Opcode=>Instruction(31 downto 26),
+		RegDst=>RegDst,
+		Branch=>Branch,
+		MemRead=>MemRead,
+		MemtoReg=>MemtoReg,
+		MemWrite=>MemWrite,
+		ALUSrc=>ALUSrc,
+		RegWrite=>RegWrite,
+		Jump=>Jump,
+		ALUOp=>ALUOp,
+		StackOps=>StackOps);
+Mux1:mux5
+	port map(
+		x=>Instruction(20 downto 16),
+		y=>Instruction(15 downto 11),
+		sel=>RegDst,
+		z=>SelectedWriteReg);
+Register1:registers
+	port map(
+		RR1=>Instruction(25 downto 21),
+		RR2=>Instruction(20 downto 16),
+		WR=>SelectedWriteReg,
+		WD=>MemWriteData,
+		RegWrite=>RegWrite,
+		StackOps=>StackOps,
+		Clk=>clk,
+		RD1=>RegisterData1,
+		RD2=>RegisterData2,
+		WS=>AluResult);
+SignExtend1:SignExtend
+	port map(
+		Instruction(15 downto 0),
+		SignExtendedImmediate);
+Mux2:mux32
+	port map(
+		RegisterData2,
+		SignExtendedImmediate,
+		ALUSrc,
+		ImmediateOrReg);
+ALUControl1:ALUControl
+	port map(
+		AluOp=>ALUOp,
+		Funct=>Instruction(5 downto 0),
+		Operation=>Operation);
+ALU1:ALU32
+	port map(
+		RegisterData1,
+		SelectedAluSrc2,
+		Operation,
+		AluResult,
+		Zero,
+		open);
+Shift1:ShiftLeft2
+	port map(
+		SignExtendedImmediate,
+		ShiftedBranchOffset);
+AddALU:ALU32
+	port map(
+		a=>PCPlus4,
+		b=>ShiftedBranchOffset,
+		Oper=>"0010",
+		Result=>BranchAddress,
+		Zero=>open,
+		Overflow=>open);
+ShiftJump:ShiftLeft2Jump
+	port map(
+		PCPlus4(31 downto 28),
+		Instruction(25 downto 0),
+		JumpAddress);
+And1:And2
+	port map(
+		Branch,
+		Zero,
+		BranchOpResult);
+Mux3:mux32
+	port map(
+		PCPlus4,
+		BranchAddress,
+		BranchOpResult,
+		BranchOrPCPlus4);
+DMemory:DataMemory
+	port map(
+		WriteData=>MemWriteData,
+		Address=>MemAddress,
+		MemRead,
+		MemWrite,
+		DelayedClock,
+		StackOps,
+		MemReadData);
+Mux4:mux32
+	port map(
+		AluResult,
+		MemReadData,
+		MemtoReg,
+		MemWriteData);
+Mux55:mux32
+	port map(
+		BranchOrPCPlus4,
+		JumpAddress,
+		Jump,
+		NextPC);
+Mux6:mux32
+	port map(
+		RegisterDat2,
+		SignExtendedImmediate,
+		StackOps(0),
+		MemWriteData);
+Mux32_21:MUX32_2
+	port map(
+		AluResult,
+		RegisterData1,
+		StackOps,
+		MemAddress);
+Mux32_41:MUX32_4
+	port map(
+		ImmediateOrReg,
+		ImmediateOrReg,
+		four,
+		neg_four,
+		StackOps,
+		SelectedAluSrc2);
 
 end structure;
