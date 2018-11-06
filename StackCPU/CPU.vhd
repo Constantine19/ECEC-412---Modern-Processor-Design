@@ -9,52 +9,47 @@ entity CPU is
 end CPU;
 
 architecture structure of CPU is
-	component PC is
+	component reg is
+		generic (n: natural := 32);
 		port(
 			clk: in std_logic;
-			AddressIn: in std_logic_vector(32-1 downto 0);
-			AddressOut: out std_logic_vector(32-1 downto 0));
+			x: in std_logic_vector(n-1 downto 0);
+			y: out std_logic_vector(n-1 downto 0)
+		);
 	end component;
-
 	component SignExtend is
 		port(
 			x: in std_logic_vector(15 downto 0);
 			y: out std_logic_vector(31 downto 0));
 	end component;
-
 	component ShiftLeft2 is
 		port(
 			x: in std_logic_vector(31 downto 0);
 			y: out std_logic_vector(31 downto 0));
 	end component;
-
 	component ShiftLeft2Jump is
 		port(
 			x: in std_logic_vector(3 downto 0);
 			y: in std_logic_vector(25 downto 0);
-			z: out std_logic_vector(31 downto 0));
+			z: out std_logic_vector(32-1 downto 0));
 	end component;
-
 	component mux5 is
 		port(
 			x,y: in std_logic_vector(4 downto 0);
 			sel: in std_logic;
 			z: out std_logic_vector(4 downto 0));
 	end component;
-
 	component mux32 is
 		port(
 			x,y: in std_logic_vector(31 downto 0);
 			sel: in std_logic;
 			z: out std_logic_vector(31 downto 0));
 	end component;
-
 	component And2 is
 		port(
 			x,y: in std_logic;
 			z: out std_logic);
 	end component;
-
 	component ALU32 is
 		generic(
 			n: natural := 32);
@@ -64,7 +59,6 @@ architecture structure of CPU is
 			Result: buffer std_logic_vector(n-1 downto 0);
 			Zero,Overflow: buffer std_logic);
 	end component;
-
 	component registers is
 		port(
 			RR1,RR2,WR: in std_logic_vector(4 downto 0);
@@ -73,47 +67,41 @@ architecture structure of CPU is
 			StackOps: in std_logic_vector(1 downto 0);
 			RD1,RD2: out std_logic_vector(31 downto 0));
 	end component;
-
 	component InstMemory is
 		port(
 			Address: in std_logic_vector(31 downto 0);
 			ReadData: out std_logic_vector(31 downto 0));
 	end component;
-
 	component DataMemory is
 		port(
-			MemWriteData: in std_logic_vector(31 downto 0);
+			WriteData: in std_logic_vector(31 downto 0);
 			Address: in std_logic_vector(31 downto 0);
 			MemRead,MemWrite,CLK: in std_logic;
 			StackOps: in std_logic_vector(1 downto 0);
 			ReadData: out std_logic_vector(31 downto 0));
 	end component;
-
 	component ALUControl is
 		port(
 			ALUOp: in std_logic_vector(1 downto 0);
 			Funct: in std_logic_vector(5 downto 0);
 			Operation: out std_logic_vector(3 downto 0));
 	end component;
-
 	component Control is
 		port(
 			Opcode: in std_logic_vector(5 downto 0);
-			RegDst, Branch, MemRead, MemtoReg : out std_logic;
-			ALUSrc, RegWrite, Jump, MemWrite  : out std_logic;
-			ALUOp,StackOps: out std_logic_vector(1 downto 0));
+			RegDst, Branch, MemRead, MemtoReg: out std_logic;
+			ALUSrc, RegWrite, Jump, MemWrite: out std_logic;
+			ALUOp, StackOps: out std_logic_vector(1 downto 0));
 	end component;
-
 	component MUX32_2 is
 		port(
-			x,y: in std_logic_vector (31 downto 0);
+			x, y: in std_logic_vector (31 downto 0);
 		    sel: in std_logic_vector(1 downto 0);
 		    z: out std_logic_vector(31 downto 0));
 	end component;
-
 	component MUX32_4 is
 		port(
-			w,v,x,y: in std_logic_vector (31 downto 0);
+			w, v, x, y: in std_logic_vector (31 downto 0);
 		    sel: in std_logic_vector(1 downto 0);
 		    z: out std_logic_vector(31 downto 0));
 	end component;
@@ -136,7 +124,6 @@ architecture structure of CPU is
 		NextPC,
 		JumpAddress,
 		SelectedAluSrc2,
-		MemWriteData,
 		MemAddress:
 	std_logic_vector(31 downto 0);
 	signal
@@ -164,28 +151,19 @@ architecture structure of CPU is
 	signal
 		Operation:
 	std_logic_vector(3 downto 0);
-	signal
-		four:
-	std_logic_vector(31 downto 0):="00000000000000000000000000000100";
-	signal
-		neg_four:
-	std_logic_vector(31 downto 0):="11111111111111111111111111111100";
 
+	-- Constants
+	signal four: std_logic_vector(31 downto 0)
+		:= "00000000000000000000000000000100"; -- (2=>'1', others=>'0')
+	signal neg_four: std_logic_vector(31 downto 0)
+		:= "11111111111111111111111111111100"; -- (2=>'0', 1=>'0', others=>'1')
 begin
-
 	--Delayed clock
-	DelayedClock<= clk after 1 ns;
+	DelayedClock <= clk after 1 ns;
 
 	--Start
-	PC1:PC
-		port map(
-			clk=>clk,
-			AddressIn=>NextPC,
-			AddressOut=>PC);
-	InstMem: InstMemory
-		port map(
-			Address=>PC,
-			ReadData=>Instruction);
+	PC1: reg generic map(32) port map(clk, NextPC, PC);
+	InstMem: InstMemory port map(PC, Instruction);
 	Add4: ALU32
 		port map(
 			a=>PC,
@@ -242,12 +220,12 @@ begin
 			Operation=>Operation);
 	ALU1:ALU32
 		port map(
-			RegisterData1,
-			SelectedAluSrc2,
-			Operation,
-			AluResult,
-			Zero,
-			open);
+			a=>RegisterData1,
+			b=>SelectedAluSrc2,
+			Oper=>Operation,
+			Result=>AluResult,
+			Zero=>Zero,
+			Overflow=>open);
 	Shift1:ShiftLeft2
 		port map(
 			SignExtendedImmediate,
@@ -280,11 +258,11 @@ begin
 		port map(
 			WriteData=>MemWriteData,
 			Address=>MemAddress,
-			MemRead,
-			MemWrite,
-			DelayedClock,
-			StackOps,
-			MemReadData);
+			MemRead=>MemRead,
+			MemWrite=>MemWrite,
+			CLK=>DelayedClock,
+			StackOps=>StackOps,
+			ReadData=>MemReadData);
 	Mux4:mux32
 		port map(
 			AluResult,
@@ -299,7 +277,7 @@ begin
 			NextPC);
 	Mux6:mux32
 		port map(
-			RegisterDat2,
+			RegisterData2,
 			SignExtendedImmediate,
 			StackOps(0),
 			MemWriteData);
