@@ -20,3 +20,30 @@ proc compile_all {} {
 	vcom -work work ShiftLeft2Jump.vhd
 	vcom -work work SignExtend.vhd
 }
+
+proc sim_start {} {
+    vsim work.cpu
+    add wave sim:/cpu/clk
+    add wave sim:/cpu/NextPC
+    add wave sim:/cpu/PC
+    add wave sim:/cpu/Instruction
+    add wave sim:/cpu/DMemory/memFile
+    add wave sim:/cpu/Register1/regFile
+	sim_set
+}
+
+proc sim_reset {} {
+	restart
+	sim_set
+}
+
+proc sim_set {} {
+    force -freeze sim:/cpu/clk 1 0, 0 {50 ns} -r 100
+    force -freeze sim:/cpu/NextPC 32'h0 0 -cancel 110
+}
+
+
+proc sim_run {} {
+    run 1000ns
+}
+
