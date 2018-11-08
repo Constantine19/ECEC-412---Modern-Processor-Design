@@ -56,11 +56,9 @@ proc sim_set {} {
     mem load -filltype value -fillradix hexadecimal -filldata {00} /cpu/InstMem/memFile
 }
 
-
 proc sim_run {} {
     run 1000ns
 }
-
 
 proc sim_load_example_1 {} {
     sim_reset
@@ -74,4 +72,12 @@ proc sim_load_example_1 {} {
         02 53 88 20
         AD 11 00 0C
     } -fillradix hexadecimal -startaddress 0 -endaddress 31 /cpu/InstMem/memFile
+}
+
+proc sim_load_example_2 {} {
+    sim_reset
+    mem load -filltype value -filldata {
+        EB A0 00 04
+        EF B0 00 00
+    } -fillradix hexadecimal -startaddress 0 -endaddress 7 /cpu/InstMem/memFile
 }

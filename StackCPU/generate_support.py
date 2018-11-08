@@ -65,8 +65,9 @@ proc sim_load_example_1 {} {
 proc sim_load_example_2 {} {
     sim_reset
     mem load -filltype value -filldata {
-        
-    }
+        EB A0 00 04
+        EF B0 00 00
+    } -fillradix hexadecimal -startaddress 0 -endaddress 7 /cpu/InstMem/memFile
 }
 '''
 
