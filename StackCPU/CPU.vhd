@@ -9,6 +9,7 @@ entity CPU is
 end CPU;
 
 architecture structure of CPU is
+	-- Component
 	component reg is
 		generic (n: natural := 32);
 		port(
@@ -106,7 +107,7 @@ architecture structure of CPU is
 		    z: out std_logic_vector(31 downto 0));
 	end component;
 
-	--Declare Signals based on Single Cycle CPU
+	-- Declare Signals based on Single Cycle CPU
 	signal
 		Instruction,
 		PC,
@@ -158,10 +159,10 @@ architecture structure of CPU is
 	signal neg_four: std_logic_vector(31 downto 0)
 		:= "11111111111111111111111111111100"; -- (2=>'0', 1=>'0', others=>'1')
 begin
-	--Delayed clock
+	-- Delayed clock
 	DelayedClock <= clk after 1 ns;
 
-	--Start
+	-- Instruction Fetch
 	PC1: reg generic map(32) port map(clk, NextPC, PC);
 	InstMem: InstMemory port map(PC, Instruction);
 	Add4: ALU32
@@ -172,6 +173,8 @@ begin
 			Result=>PCPlus4,
 			Zero=>open,
 			Overflow=>open);
+
+	-- Instruction Decode
 	Control1: Control
 		port map(
 			Opcode=>Instruction(31 downto 26),
@@ -207,6 +210,13 @@ begin
 		port map(
 			Instruction(15 downto 0),
 			SignExtendedImmediate);
+	ShiftJump:ShiftLeft2Jump
+		port map(
+			PCPlus4(31 downto 28),
+			Instruction(25 downto 0),
+			JumpAddress);
+
+	-- Execute
 	Mux2:mux32
 		port map(
 			RegisterData2,
@@ -238,11 +248,6 @@ begin
 			Result=>BranchAddress,
 			Zero=>open,
 			Overflow=>open);
-	ShiftJump:ShiftLeft2Jump
-		port map(
-			PCPlus4(31 downto 28),
-			Instruction(25 downto 0),
-			JumpAddress);
 	And1:And2
 		port map(
 			Branch,
@@ -254,27 +259,28 @@ begin
 			BranchAddress,
 			BranchOpResult,
 			BranchOrPCPlus4);
-	DMemory:DataMemory
-		port map(
-			WriteData=>MemWriteData,
-			Address=>MemAddress,
-			MemRead=>MemRead,
-			MemWrite=>MemWrite,
-			CLK=>DelayedClock,
-			StackOps=>StackOps,
-			ReadData=>MemReadData);
-	Mux4:mux32
-		port map(
-			AluResult,
-			MemReadData,
-			MemtoReg,
-			MemWriteData);
 	Mux55:mux32
 		port map(
 			BranchOrPCPlus4,
 			JumpAddress,
 			Jump,
 			NextPC);
+	Mux32_41:MUX32_4
+		port map(
+			ImmediateOrReg,
+			ImmediateOrReg,
+			four,
+			neg_four,
+			StackOps,
+			SelectedAluSrc2);
+
+	-- Memory
+	Mux4:mux32
+		port map(
+			AluResult,
+			MemReadData,
+			MemtoReg,
+			MemWriteData);
 	Mux6:mux32
 		port map(
 			RegisterData2,
@@ -287,13 +293,14 @@ begin
 			RegisterData1,
 			StackOps,
 			MemAddress);
-	Mux32_41:MUX32_4
+	DMemory:DataMemory
 		port map(
-			ImmediateOrReg,
-			ImmediateOrReg,
-			four,
-			neg_four,
-			StackOps,
-			SelectedAluSrc2);
+			WriteData=>MemWriteData,
+			Address=>MemAddress,
+			MemRead=>MemRead,
+			MemWrite=>MemWrite,
+			CLK=>DelayedClock,
+			StackOps=>StackOps,
+			ReadData=>MemReadData);
 
 end structure;
