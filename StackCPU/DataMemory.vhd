@@ -20,18 +20,6 @@ process(WriteData, MemRead, MemWrite, CLK)
 variable check_begin:boolean := true;
 
 begin
-
-if(check_begin) then
-	memFile(4)<="00000000"; -- currently 4 00000000, -4 = 11111111, 11111100
-	memFile(4+1)<="00000000"; -- currently 4, -4 = 11111100
-	memFile(4+2)<="00000000"; -- currently 4, -4 = 11111100
-	memFile(4+3)<="00000100"; -- currently 4 00000100, -4 = 11111100
-	memFile(8)<="00000000"; -- currently 5, -5 = 11111011
-	memFile(8+1)<="00000000"; -- currently 5, -5 = 11111011
-	memFile(8+2)<="00000000"; -- currently 5, -5 = 11111011
-	memFile(8+3)<="00000101"; -- currently 5 00000101, -5 = 11111011
-	check_begin := false;
-end if;
 if CLK='1' and CLK'event then
 	if (MemWrite = '1') and (MemRead = '0') then
 		memFile(to_integer(unsigned(Address))) <= WriteData(31 downto 24);

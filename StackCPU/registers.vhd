@@ -19,16 +19,6 @@ begin
     process(RR1, RR2, WR, WD,WS, Clk, RegWrite)
         variable check_begin:boolean := true;
     begin
-        -- Initial write (this is stupid don't do this there is a way
-        -- in modelsim to write memory... amateurs)
-        if(check_begin) then
-        	regFile(0) <= "00000000000000000000000000000000";
-        	regFile(8) <= "00000000000000000000000000000100";
-        	regFile(18) <= "00000000000000000000000000001101";
-        	regFile(19) <= "00000000000000000000000000000100";
-        	regFile(29) <= "00000000000000000000000011111111";
-        	check_begin := false;
-        end if;
 
         -- Write register
         if clk='1' and clk'event then
