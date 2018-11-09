@@ -99,7 +99,7 @@ def clock(signal):
 
     :return: declaration tcl command
     """
-    return 'force -freeze '+signal+' 1 0, 0 {50 ns} -r 100'
+    return 'force -freeze '+signal+' 1 0, 0 {50 ms} -r 100ms'
 
 def signal_for(time, signal, value):
     """
@@ -160,7 +160,7 @@ def runfor(clocks):
     :return: tcl procedure
     """
     return procedure('simrun', [
-        f'run {100*clocks}ns'
+        f'run {100*clocks}ms'
     ])
 
 # ----------------------------------- SCRIPT -----------------------------------

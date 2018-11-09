@@ -22,8 +22,8 @@ begin
 
         -- Write register
         if clk='1' and clk'event then
-        	if RegWrite = '1' then
-        		if(not(WR = "00000") or not(WR="UUUUU")) then
+        	if RegWrite='1' then
+        		if (not(WR = "00000") or not(WR="UUUUU")) then
         			regFile(to_integer(unsigned(WR))) <= WD;
         		end if;
         	end if;

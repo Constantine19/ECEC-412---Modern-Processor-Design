@@ -18,7 +18,7 @@ proc compileall {} {
 	vcom -work work SignExtend.vhd
 }
 proc simset {} {
-	force -freeze sim:/cpu/clk 1 0, 0 {50 ns} -r 100
+	force -freeze sim:/cpu/clk 1 0, 0 {50 ms} -r 100ms
 	force -freeze sim:/cpu/NextPC 32'h0 0 -cancel 10
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 0 -filldata {00000000} /cpu/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 8 -endaddress 10 -filldata {00000000 00000004 00000004} /cpu/Registers1/regFile
@@ -68,5 +68,5 @@ proc simloadexample2 {} {
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {EB 00 00 04 ED 00 00 00} /cpu/InstMem/memFile
 }
 proc simrun {} {
-	run 400ns
+	run 400ms
 }
