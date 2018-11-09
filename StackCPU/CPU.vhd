@@ -18,6 +18,15 @@ architecture structure of CPU is
 			y: out std_logic_vector(n-1 downto 0)
 		);
 	end component;
+	component mux is
+		generic (n: natural := 32);
+		port (
+	        x: in std_logic_vector(n-1 downto 0);
+	        y: in std_logic_vector(n-1 downto 0);
+	        sel: in std_logic;
+	        z: out std_logic_vector(n-1 downto 0)
+	    );
+	end component;
 	component SignExtend is
 		port(
 			x: in std_logic_vector(15 downto 0);
@@ -188,7 +197,8 @@ begin
 			Jump=>Jump,
 			ALUOp=>ALUOp,
 			StackOps=>StackOps);
-	Mux1:mux5
+	Mux1: mux
+		generic map(5)
 		port map(
 			x=>Instruction(20 downto 16),
 			y=>Instruction(15 downto 11),
@@ -217,12 +227,13 @@ begin
 			JumpAddress);
 
 	-- Execute
-	Mux2:mux32
+	Mux2: mux
+		generic map(32)
 		port map(
-			RegisterData2,
-			SignExtendedImmediate,
-			ALUSrc,
-			ImmediateOrReg);
+			x=>RegisterData2,
+			y=>SignExtendedImmediate,
+			sel=>ALUSrc,
+			z=>ImmediateOrReg);
 	ALUControl1:ALUControl
 		port map(
 			AluOp=>ALUOp,
@@ -253,18 +264,20 @@ begin
 			Branch,
 			Zero,
 			BranchOpResult);
-	Mux3:mux32
+	Mux3: mux
+		generic map(32)
 		port map(
-			PCPlus4,
-			BranchAddress,
-			BranchOpResult,
-			BranchOrPCPlus4);
-	Mux55:mux32
+			x=>PCPlus4,
+			y=>BranchAddress,
+			sel=>BranchOpResult,
+			z=>BranchOrPCPlus4);
+	Mux55: mux
+		generic map(32)
 		port map(
-			BranchOrPCPlus4,
-			JumpAddress,
-			Jump,
-			NextPC);
+			x=>BranchOrPCPlus4,
+			y=>JumpAddress,
+			sel=>Jump,
+			z=>NextPC);
 	Mux32_41:MUX32_4
 		port map(
 			ImmediateOrReg,
@@ -275,18 +288,20 @@ begin
 			SelectedAluSrc2);
 
 	-- Memory
-	Mux4:mux32
+	Mux4: mux
+		generic map(32)
 		port map(
-			AluResult,
-			MemReadData,
-			MemtoReg,
-			MemWriteData);
-	Mux6:mux32
+			x=>AluResult,
+			y=>MemReadData,
+			sel=>MemtoReg,
+			z=>MemWriteData);
+	Mux6: mux
+		generic map(32)
 		port map(
-			RegisterData2,
-			SignExtendedImmediate,
-			StackOps(0),
-			MemWriteData);
+			x=>RegisterData2,
+			y=>SignExtendedImmediate,
+			sel=>StackOps(0),
+			z=>MemWriteData);
 	Mux32_21:MUX32_2
 		port map(
 			AluResult,

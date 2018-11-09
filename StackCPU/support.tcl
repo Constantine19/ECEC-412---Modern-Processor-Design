@@ -7,10 +7,9 @@ proc compileall {} {
 	vcom -work work CPU.vhd
 	vcom -work work DataMemory.vhd
 	vcom -work work InstMemory.vhd
-	vcom -work work mux32.vhd
+	vcom -work work mux.vhd
 	vcom -work work MUX32_2.vhd
 	vcom -work work MUX32_4.vhd
-	vcom -work work mux5.vhd
 	vcom -work work NOR32.vhd
 	vcom -work work PC.vhd
 	vcom -work work reg.vhd
