@@ -7,7 +7,8 @@ import re
 # Constants
 INSTRUCTION_MEMORY='/cpu/InstMem/memFile'
 DATA_MEMORY='/cpu/DMemory/memFile'
-REGISTER_MEMORY='/cpu/Register1/regFile'
+REGISTER='/cpu/Register1'
+REGISTER_MEMORY=f'{REGISTER}/regFile'
 CONTROLLER = '/cpu/Control1'
 
 # --------------------------------- FUNCTIONS ---------------------------------
@@ -213,6 +214,15 @@ support_script = '\n'.join([
             ('Jump', f'sim:{CONTROLLER}/Jump'),
             ('AluOp', f'sim:{CONTROLLER}/ALUOp'),
             ('StackOps', f'sim:{CONTROLLER}/StackOps')
+        ]),
+        wave_group('Register Data', 'Cyan', [
+            ('Read Address 1', f'sim:{REGISTER}/RR1'),
+            ('Read Address 2', f'sim:{REGISTER}/RR2'),
+            ('Write Address', f'sim:{REGISTER}/WR'),
+            ('Write Data', f'sim:{REGISTER}/WD'),
+            ('Write Stack', f'sim:{REGISTER}/WS'),
+            ('Read Data 1', f'sim:{REGISTER}/RD1'),
+            ('Read Data 2', f'sim:{REGISTER}/RD2')
         ])
     ]),
 

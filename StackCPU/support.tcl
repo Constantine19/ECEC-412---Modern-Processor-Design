@@ -52,6 +52,13 @@ proc simstart {} {
 	add wave -group "Control Signals" -color "Orange" -label "Jump" "sim:/cpu/Control1/Jump"
 	add wave -group "Control Signals" -color "Orange" -label "AluOp" "sim:/cpu/Control1/ALUOp"
 	add wave -group "Control Signals" -color "Orange" -label "StackOps" "sim:/cpu/Control1/StackOps"
+	add wave -group "Register Data" -color "Cyan" -label "Read Address 1" "sim:/cpu/Register1/RR1"
+	add wave -group "Register Data" -color "Cyan" -label "Read Address 2" "sim:/cpu/Register1/RR2"
+	add wave -group "Register Data" -color "Cyan" -label "Write Address" "sim:/cpu/Register1/WR"
+	add wave -group "Register Data" -color "Cyan" -label "Write Data" "sim:/cpu/Register1/WD"
+	add wave -group "Register Data" -color "Cyan" -label "Write Stack" "sim:/cpu/Register1/WS"
+	add wave -group "Register Data" -color "Cyan" -label "Read Data 1" "sim:/cpu/Register1/RD1"
+	add wave -group "Register Data" -color "Cyan" -label "Read Data 2" "sim:/cpu/Register1/RD2"
 	simset
 }
 proc simloadexample1 {} {
