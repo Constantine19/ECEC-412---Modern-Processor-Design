@@ -43,18 +43,6 @@ architecture structure of CPU is
 			y: in std_logic_vector(25 downto 0);
 			z: out std_logic_vector(32-1 downto 0));
 	end component;
-	component mux5 is
-		port(
-			x,y: in std_logic_vector(4 downto 0);
-			sel: in std_logic;
-			z: out std_logic_vector(4 downto 0));
-	end component;
-	component mux32 is
-		port(
-			x,y: in std_logic_vector(31 downto 0);
-			sel: in std_logic;
-			z: out std_logic_vector(31 downto 0));
-	end component;
 	component And2 is
 		port(
 			x,y: in std_logic;
@@ -103,18 +91,6 @@ architecture structure of CPU is
 			ALUSrc, RegWrite, Jump, MemWrite: out std_logic;
 			ALUOp, StackOps: out std_logic_vector(1 downto 0));
 	end component;
-	component MUX32_2 is
-		port(
-			x, y: in std_logic_vector (31 downto 0);
-		    sel: in std_logic_vector(1 downto 0);
-		    z: out std_logic_vector(31 downto 0));
-	end component;
-	component MUX32_4 is
-		port(
-			w, v, x, y: in std_logic_vector (31 downto 0);
-		    sel: in std_logic_vector(1 downto 0);
-		    z: out std_logic_vector(31 downto 0));
-	end component;
 
 	-- Declare Signals based on Single Cycle CPU
 	signal
@@ -133,15 +109,13 @@ architecture structure of CPU is
 		BranchOrPCPlus4,
 		NextPC,
 		JumpAddress,
+		StackOpOffset,
 		SelectedAluSrc2,
 		MemAddress:
 	std_logic_vector(31 downto 0);
 	signal
 		SelectedWriteReg:
 	std_logic_vector(4 downto 0);
-	signal
-		BranchOpResult:
-	std_logic;
 	signal
 		RegDst,
 		Branch,
@@ -152,6 +126,8 @@ architecture structure of CPU is
 		RegWrite,
 		Jump,
 		Zero,
+		BranchOpResult,
+		StackPop,
 		DelayedClock:
 	std_logic;
 	signal
@@ -174,7 +150,7 @@ begin
 	-- Instruction Fetch
 	PC1: reg generic map(32) port map(clk, NextPC, PC);
 	InstMem: InstMemory port map(PC, Instruction);
-	Add4: ALU32
+	AddPCPlus4: ALU32
 		port map(
 			a=>PC,
 			b=>four,
@@ -184,7 +160,7 @@ begin
 			Overflow=>open);
 
 	-- Instruction Decode
-	Control1: Control
+	Controller: Control
 		port map(
 			Opcode=>Instruction(31 downto 26),
 			RegDst=>RegDst,
@@ -197,14 +173,14 @@ begin
 			Jump=>Jump,
 			ALUOp=>ALUOp,
 			StackOps=>StackOps);
-	Mux1: mux
+	MuxForSelectedWriteReg: mux
 		generic map(5)
 		port map(
 			x=>Instruction(20 downto 16),
 			y=>Instruction(15 downto 11),
 			sel=>RegDst,
 			z=>SelectedWriteReg);
-	Register1:registers
+	Registers1: registers
 		port map(
 			RR1=>Instruction(25 downto 21),
 			RR2=>Instruction(20 downto 16),
@@ -216,30 +192,44 @@ begin
 			RD1=>RegisterData1,
 			RD2=>RegisterData2,
 			WS=>AluResult);
-	SignExtend1:SignExtend
+	MakeImmediate: SignExtend
 		port map(
 			Instruction(15 downto 0),
 			SignExtendedImmediate);
-	ShiftJump:ShiftLeft2Jump
+	ShiftJump: ShiftLeft2Jump
 		port map(
 			PCPlus4(31 downto 28),
 			Instruction(25 downto 0),
 			JumpAddress);
 
 	-- Execute
-	Mux2: mux
+	MuxForImmediateOrReg: mux
 		generic map(32)
 		port map(
 			x=>RegisterData2,
 			y=>SignExtendedImmediate,
 			sel=>ALUSrc,
 			z=>ImmediateOrReg);
-	ALUControl1:ALUControl
+	MuxForStackOfset: mux
+		generic map(32)
+		port map(
+			x=>four,
+			y=>neg_four,
+			sel=>StackOps(1),
+			z=>StackOpOffset);
+	MuxForSelectedAluSrc2: mux
+		generic map(32)
+		port map(
+			x=>ImmediateOrReg,
+			y=>StackOpOffset,
+			sel=>StackOps(0),
+			z=>SelectedAluSrc2);
+	ALUControl1: ALUControl
 		port map(
 			AluOp=>ALUOp,
 			Funct=>Instruction(5 downto 0),
 			Operation=>Operation);
-	ALU1:ALU32
+	MainALU: ALU32
 		port map(
 			a=>RegisterData1,
 			b=>SelectedAluSrc2,
@@ -247,11 +237,11 @@ begin
 			Result=>AluResult,
 			Zero=>Zero,
 			Overflow=>open);
-	Shift1:ShiftLeft2
+	BranchShiftLeft: ShiftLeft2
 		port map(
 			SignExtendedImmediate,
 			ShiftedBranchOffset);
-	AddALU:ALU32
+	AddBranchShift: ALU32
 		port map(
 			a=>PCPlus4,
 			b=>ShiftedBranchOffset,
@@ -259,56 +249,56 @@ begin
 			Result=>BranchAddress,
 			Zero=>open,
 			Overflow=>open);
-	And1:And2
+	AndForBranch: And2
 		port map(
 			Branch,
 			Zero,
 			BranchOpResult);
-	Mux3: mux
+	MuxForBranchOrPCPlus4: mux
 		generic map(32)
 		port map(
 			x=>PCPlus4,
 			y=>BranchAddress,
 			sel=>BranchOpResult,
 			z=>BranchOrPCPlus4);
-	Mux55: mux
+	MuxForNextPC: mux
 		generic map(32)
 		port map(
 			x=>BranchOrPCPlus4,
 			y=>JumpAddress,
 			sel=>Jump,
 			z=>NextPC);
-	Mux32_41:MUX32_4
-		port map(
-			ImmediateOrReg,
-			ImmediateOrReg,
-			four,
-			neg_four,
-			StackOps,
-			SelectedAluSrc2);
 
 	-- Memory
-	Mux4: mux
+	MuxForMemWriteData: mux
 		generic map(32)
 		port map(
 			x=>AluResult,
 			y=>MemReadData,
 			sel=>MemtoReg,
 			z=>MemWriteData);
-	Mux6: mux
+	MuxForMemWriteStackOp: mux
 		generic map(32)
 		port map(
 			x=>RegisterData2,
 			y=>SignExtendedImmediate,
 			sel=>StackOps(0),
 			z=>MemWriteData);
-	Mux32_21:MUX32_2
+	StackPopCalc: And2
+		port map(
+			x => StackOps(0),
+			y => not StackOps(1),
+			z => StackPop
+		);
+	MuxForStackPop: mux
+		generic map(32)
 		port map(
 			AluResult,
 			RegisterData1,
-			StackOps,
-			MemAddress);
-	DMemory:DataMemory
+			StackPop,
+			MemAddress
+		);
+	DataMem: DataMemory
 		port map(
 			WriteData=>MemWriteData,
 			Address=>MemAddress,

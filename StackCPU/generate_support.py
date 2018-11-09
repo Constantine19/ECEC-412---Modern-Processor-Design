@@ -6,10 +6,10 @@ import re
 
 # Constants
 INSTRUCTION_MEMORY='/cpu/InstMem/memFile'
-DATA_MEMORY='/cpu/DMemory/memFile'
-REGISTER='/cpu/Register1'
+DATA_MEMORY='/cpu/DataMem/memFile'
+REGISTER='/cpu/Registers1'
 REGISTER_MEMORY=f'{REGISTER}/regFile'
-CONTROLLER = '/cpu/Control1'
+CONTROLLER = '/cpu/Controller'
 
 # --------------------------------- FUNCTIONS ---------------------------------
 
