@@ -199,7 +199,7 @@ support_script = '\n'.join([
             ('Instruction', 'sim:/cpu/Instruction')
         ]),
         wave_group('Memory Files', 'Medium Orchid', [
-            ('Data Memory', 'sim:/cpu/DMemory/memFile'),
+            ('Data Memory', f'sim:{DATA_MEMORY}'),
             ('Registers', f'sim:{REGISTER_MEMORY}')
         ]),
         wave_group('Control Signals', 'Orange', [
@@ -212,8 +212,9 @@ support_script = '\n'.join([
             ('ALUSrc', f'sim:{CONTROLLER}/ALUSrc'),
             ('RegWrte', f'sim:{CONTROLLER}/RegWrite'),
             ('Jump', f'sim:{CONTROLLER}/Jump'),
-            ('AluOp', f'sim:{CONTROLLER}/ALUOp'),
-            ('StackOps', f'sim:{CONTROLLER}/StackOps')
+            ('ALUOp', f'sim:{CONTROLLER}/ALUOp'),
+            ('StackOps', f'sim:{CONTROLLER}/StackOps'),
+            ('StackPop', f'sim:/cpu/StackPop')
         ]),
         wave_group('Register Data', 'Cyan', [
             ('Read Address 1', f'sim:{REGISTER}/RR1'),

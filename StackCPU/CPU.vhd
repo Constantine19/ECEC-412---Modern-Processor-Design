@@ -284,12 +284,7 @@ begin
 			y=>SignExtendedImmediate,
 			sel=>StackOps(0),
 			z=>MemWriteData);
-	StackPopCalc: And2
-		port map(
-			x => StackOps(0),
-			y => not StackOps(1),
-			z => StackPop
-		);
+	StackPop <= StackOps(0) and (not StackOps(1));
 	MuxForStackPop: mux
 		generic map(32)
 		port map(
