@@ -19,7 +19,7 @@ begin
 
 case Opcode is
 	when "000000" =>		--R-Format
-		StackOps <= "00";		
+		StackOps <= "00";
 		RegDst <= '1';
 		ALUSrc <= '0';
 		MemtoReg <= '0';
@@ -30,7 +30,7 @@ case Opcode is
 		Jump <= '0';
 		ALUOp <= "10";
 	when "100011" =>		--lw
-		StackOps <= "00";	 	
+		StackOps <= "00";
 		RegDst <= '0';
 		ALUSrc <= '1';
 		MemtoReg <= '1';
@@ -41,7 +41,7 @@ case Opcode is
 		Jump <= '0';
 		ALUOp <= "00";
 	when "101011" =>		--sw
-		StackOps <= "00";		
+		StackOps <= "00";
 		RegDst <= '-';
 		ALUSrc <= '1';
 		MemtoReg <= '-';
@@ -84,7 +84,7 @@ case Opcode is
 		Branch <= '0';
 		Jump <= '0';
 		ALUOp <= "00";
-	when "111011" => 		--pop
+	when "111011" => 		-- pop
 		StackOps <= "10";
 		RegDst <= '0';
 		ALUSrc <= '1';
