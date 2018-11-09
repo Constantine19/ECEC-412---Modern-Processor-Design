@@ -7,7 +7,7 @@ import re
 # Constants
 INSTRUCTION_MEMORY='/cpu/IFStage/InstMem/memFile'
 DATA_MEMORY='/cpu/DataMem/memFile'
-REGISTER='/cpu/Registers1'
+REGISTER='/cpu/IDStage/Registers1'
 REGISTER_MEMORY=f'{REGISTER}/regFile'
 CONTROLLER = '/cpu/Controller'
 
@@ -174,12 +174,12 @@ support_script = '\n'.join([
     procedure('simset', flat([
         clock('sim:/cpu/clk'),
         signal_for(20, 'sim:/cpu/IFStage/NextPC', '32\'h0'),
-        # mem_load_all(REGISTER_MEMORY, '08X', [
-        #     ( 0, [0x00000000]),
-        #     ( 8, [0x00000000, 0x00000004, 0x00000004]),
-        #     (20, [0x0000000C, 0x00000005, 0x00000008, 0x00000003]),
-        #     (29, [0x000000F8])
-        # ]),
+        mem_load_all(REGISTER_MEMORY, '08X', [
+            ( 0, [0x00000000]),
+            ( 8, [0x00000000, 0x00000004, 0x00000004]),
+            (20, [0x0000000C, 0x00000005, 0x00000008, 0x00000003]),
+            (29, [0x000000F8])
+        ]),
         # mem_load(DATA_MEMORY, 0, '02X', [
         #     0x00, 0x00, 0x00, 0x04,
         #     0x00, 0x00, 0x00, 0x08
@@ -196,11 +196,26 @@ support_script = '\n'.join([
         wave_group('CPU Clock', 'Grey60', [
             ('Clock', 'sim:/cpu/clk'),
         ]),
+        wave_group('Mem Files', 'Magenta', [
+            ('Register', REGISTER_MEMORY)
+        ]),
         wave_group('IF Stage', 'White', [
             ('Next PC', 'sim:/cpu/IFStage/NextPC'),
             ('PC', 'sim:/cpu/IFStage/PC'),
             ('Instruction', 'sim:/cpu/IFStage/Instruction'),
             ('PC + 4', 'sim:/cpu/IFStage/PCPlus4')
+        ]),
+        wave_group('ID Stage', 'Orange', [
+            ('PC + 4 input', 'sim:/cpu/IDStage/PCPlus4In'),
+            ('Instruction', 'sim:/cpu/IDStage/Instruction'),
+            ('Read Address 1', 'sim:/cpu/IDStage/Registers1/RR1'),
+            ('Read Address 2', 'sim:/cpu/IDStage/Registers1/RR2'),
+            ('WriteBack Address', 'sim:/cpu/IDStage/WBR'),
+            ('WriteBack Write Data', 'sim:/cpu/IDStage/WD'),
+            ('WriteBack Stack Data', 'sim:/cpu/IDStage/WS'),
+            ('Read Data 1', 'sim:/cpu/IDStage/RD1'),
+            ('Read Data 2', 'sim:/cpu/IDStage/RD2'),
+            ('Write Address', 'sim:/cpu/IDStage/WR')
         ])
     ]),
 
