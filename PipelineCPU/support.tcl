@@ -9,6 +9,7 @@ proc compileall {} {
 	vcom -work work ID_Stage.vhd
 	vcom -work work IF_Stage.vhd
 	vcom -work work InstMemory.vhd
+	vcom -work work MEM_Stage.vhd
 	vcom -work work mux.vhd
 	vcom -work work NOR32.vhd
 	vcom -work work PC.vhd
@@ -18,6 +19,7 @@ proc compileall {} {
 	vcom -work work ShiftLeft2.vhd
 	vcom -work work ShiftLeft2Jump.vhd
 	vcom -work work SignExtend.vhd
+	vcom -work work WB_Stage.vhd
 }
 proc simset {} {
 	force -freeze sim:/cpu/clk 1 0, 0 {50 ns} -r 100ns
@@ -26,6 +28,7 @@ proc simset {} {
 	mem load -filltype value -fillradix hexadecimal -startaddress 8 -endaddress 10 -filldata {00000000 00000004 00000004} /cpu/IDStage/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 20 -endaddress 23 -filldata {0000000C 00000005 00000008 00000003} /cpu/IDStage/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 29 -endaddress 29 -filldata {000000F8} /cpu/IDStage/Registers1/regFile
+	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {00 00 00 04 00 00 00 08} /cpu/MEMStage/DataMem/memFile
 	mem load -filltype value -fillradix hexadecimal -filldata {00} /cpu/IFStage/InstMem/memFile
 }
 proc simreset {} {
@@ -36,6 +39,7 @@ proc simstart {} {
 	vsim work.cpu
 	add wave -group "CPU Clock" -color "Grey60" -label "Clock" "sim:/cpu/clk"
 	add wave -group "Mem Files" -color "Magenta" -label "Register" "/cpu/IDStage/Registers1/regFile"
+	add wave -group "Mem Files" -color "Magenta" -label "Data Memory" "/cpu/MEMStage/DataMem/memFile"
 	add wave -group "IF Stage" -color "White" -label "Next PC" "sim:/cpu/IFStage/NextPC"
 	add wave -group "IF Stage" -color "White" -label "PC" "sim:/cpu/IFStage/PC"
 	add wave -group "IF Stage" -color "White" -label "Instruction" "sim:/cpu/IFStage/Instruction"

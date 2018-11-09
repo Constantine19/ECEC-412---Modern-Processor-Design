@@ -17,14 +17,14 @@ entity MEM_Stage is
             -- WRIn
             WRIn: in std_logic_vector(4 downto 0);
             -- ALU Result
-            RD2, Immediate, ALUResult, NextPCIn: out std_logic_vector(31 downto 0);
+            RD1, RD2, Immediate, ALUResultIn, NextPCIn: out std_logic_vector(31 downto 0);
         -- Outputs
             -- RegWriteOut, StackOpOut, StackPushPopOut
             RegWriteOut, MemtoRegOut, StackOpOut, StackPushPopOut: out std_logic;
             -- WROut
             WROut: out std_logic_vector(4 downto 0);
-            -- Next PC Out
-            NextPCOut: out std_logic_vector(31 downto 0)
+            -- Next PC
+            ALUResultOut, NextPCOut, MemReadData: out std_logic_vector(31 downto 0)
     );
 end MEM_Stage;
 
@@ -79,7 +79,7 @@ begin
 	MuxForStackPop: mux
 		generic map(32)
 		port map(
-			AluResult,
+			ALUResultIn,
 			RegisterData1,
 			StackPop,
 			MemAddress
@@ -90,6 +90,7 @@ begin
 			Address=>MemAddress,
 			MemRead=>MemRead,
 			MemWrite=>MemWrite,
-			CLK=>DelayedClock,
+			CLK=>CLK,
 			ReadData=>MemReadData);
+    ALUResultReg: reg generic map(32) port map(CLK, ALUResultIn, ALUResultOut);
 end arch;

@@ -23,7 +23,7 @@ entity EX_Stage is
             -- WRIn
             WRIn: in std_logic_vector(4 downto 0);
             -- RD1, RD2In, Immediate
-            RD1,RD2In,ImmediateIn,PCPlus4: in std_logic_vector(31 downto 0);
+            RD1In, RD2In, ImmediateIn, PCPlus4: in std_logic_vector(31 downto 0);
         -- Outputs
             -- MemReadOut, MemtoRegOut, MemWriteOut
             MemReadOut, MemtoRegOut, MemWriteOut: out std_logic;
@@ -32,7 +32,7 @@ entity EX_Stage is
             -- WROut
             WROut: out std_logic_vector(4 downto 0);
             -- ALU Result
-            ALUResult, NextPC, RD2Out, ImmediateOut: out std_logic_vector(31 downto 0)
+            ALUResult, NextPC, RD1Out, RD2Out, ImmediateOut: out std_logic_vector(31 downto 0)
     );
 end EX_Stage;
 
@@ -140,7 +140,7 @@ begin
 			Operation=>Operation);
     MainALU: ALU32
 		port map(
-			a=>RD1,
+			a=>RD1In,
 			b=>SelectedAluSrc2,
 			Oper=>Operation,
 			Result=>ALUResultSignal,
@@ -185,5 +185,6 @@ begin
     ALUResultReg: reg generic map(32) port map(CLK, ALUResultSignal, ALUResult);
     NextPCReg: reg generic map(32) port map(CLK, NextPCSignal, NextPC);
     RD2Reg: reg generic map(32) port map(CLK, RD2In, RD2Out);
+    RD1Reg: reg generic map(32) port map(CLK, RD1In, RD1Out);
     ImmediateReg: reg generic map(32) port map(CLK, ImmediateIn, ImmediateOut);
 end arch;

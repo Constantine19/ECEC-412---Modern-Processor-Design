@@ -92,14 +92,27 @@ architecture structure of CPU is
 	            -- WRIn
 	            WRIn: in std_logic_vector(4 downto 0);
 	            -- ALU Result
-	            RD2, Immediate, ALUResult, NextPCIn: out std_logic_vector(31 downto 0);
+	            RD1, RD2, Immediate, ALUResultIn, NextPCIn: out std_logic_vector(31 downto 0);
 	        -- Outputs
 	            -- RegWriteOut, StackOpOut, StackPushPopOut
 	            RegWriteOut, MemtoRegOut, StackOpOut, StackPushPopOut: out std_logic;
 	            -- WROut
 	            WROut: out std_logic_vector(4 downto 0);
 	            -- Next PC Out
-	            NextPCOut: out std_logic_vector(31 downto 0)
+	            NextPCOut, ALUResultOut, MemReadData: out std_logic_vector(31 downto 0)
+	    );
+	end component;
+
+	component WB_Stage is
+	    port(
+	        -- CLK
+	        CLK: in std_logic;
+	        -- ALUResult
+	        ALUResult, MemReadData: in std_logic_vector(31 downto 0);
+	        -- MemtoReg
+	        MemtoReg, RegWrite: in std_logic;
+	        -- RegWriteData/StackWrite
+	        RegWriteData, StackWrite: out std_logic_vector(31 downto 0)
 	    );
 	end component;
 
@@ -109,6 +122,7 @@ architecture structure of CPU is
 		PCPlus4_IF,
 		PCPlus4_ID,
 		RD1_ID,
+		RD1_EX,
 		RD2_ID,
 		RD2_EX,
 		Immediate_ID,
@@ -117,6 +131,7 @@ architecture structure of CPU is
 		ALUResult_EX,
 		NextPC_EX,
 		NextPC_MEM,
+		MemReadData_MEM,
 		WD_WB,
 		WS_WB:
 	std_logic_vector(31 downto 0);
@@ -238,6 +253,7 @@ begin
 			-- ALU Result
 			ALUResult=>ALUResult_EX,
 			NextPC=>NextPC_EX,
+			RD1Out=>RD1_EX,
 			RD2Out=>RD2_EX,
 			ImmediateOut=>Immediate_EX
 		);
@@ -256,6 +272,7 @@ begin
 			-- WRIn
 			WRIn=>WR_EX,
 			-- ALU Result
+			RD1=>RD1_EX,
 			RD2=>RD2_EX,
 			Immediate=>Immediate_EX,
 			ALUResult=>ALUResult_EX,
@@ -269,7 +286,20 @@ begin
 			-- WROut
 			WROut=>WR_MEM
 			-- Next PC Out
-			NextPCOut=>NextPC_MEM
+			NextPCOut=>NextPC_MEM,
+			AluResultOut=>ALUResult_MEM,
+			MemReadData=>MemReadData_MEM
+		);
+
+	WBStage: WB_Stage
+		port map(
+			CLK=>clk,
+			ALUResult=>ALUResult_MEM,
+			MemReadData=>MemReadData_MEM,
+			MemtoReg=>MemtoReg_MEM,
+			RegWrite=>RegWrite_WB,
+			RegWriteData=>WD_WB,
+			StackWrite=>WS_WB
 		);
 
 end structure;
