@@ -17,6 +17,16 @@ register_table = {
     'ra': 31
 }
 
+opcode_table = {
+    'alu': 0x00,
+    'lw': 0x23,
+    'sw': 0x2b
+}
+
+funct_table = {
+    'add': 0x20
+}
+
 def register_lookup(name):
     match = register_regex.match(name)
     if match:

@@ -16,10 +16,9 @@ architecture Behavioral of registers is
     type regFile_Type is array(0 to 31) of std_logic_vector(31 downto 0);
     signal regFile: regFile_Type;
 begin
-    process(RR1, RR2, WR, WD,WS, Clk, RegWrite)
+    process(RR1, RR2, WR, WD, WS, Clk, RegWrite)
         variable check_begin:boolean := true;
     begin
-
         -- Write register
         if clk='1' and clk'event then
         	if RegWrite='1' then
@@ -28,7 +27,7 @@ begin
         		end if;
         	end if;
         end if;
-        
+
         -- Read registers
     	RD1 <= regFile(to_integer(unsigned(RR1)));
     	RD2 <= regFile(to_integer(unsigned(RR2)));

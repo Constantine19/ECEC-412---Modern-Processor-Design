@@ -27,35 +27,17 @@ architecture structure of CPU is
 	        z: out std_logic_vector(n-1 downto 0)
 	    );
 	end component;
-	component SignExtend is
+	component InstMemory is
 		port(
-			x: in std_logic_vector(15 downto 0);
-			y: out std_logic_vector(31 downto 0));
+			Address: in std_logic_vector(31 downto 0);
+			ReadData: out std_logic_vector(31 downto 0));
 	end component;
-	component ShiftLeft2 is
+	component Control is
 		port(
-			x: in std_logic_vector(31 downto 0);
-			y: out std_logic_vector(31 downto 0));
-	end component;
-	component ShiftLeft2Jump is
-		port(
-			x: in std_logic_vector(3 downto 0);
-			y: in std_logic_vector(25 downto 0);
-			z: out std_logic_vector(32-1 downto 0));
-	end component;
-	component And2 is
-		port(
-			x,y: in std_logic;
-			z: out std_logic);
-	end component;
-	component ALU32 is
-		generic(
-			n: natural := 32);
-		port(
-			a,b: in std_logic_vector(n-1 downto 0);
-			Oper: in std_logic_vector(3 downto 0);
-			Result: buffer std_logic_vector(n-1 downto 0);
-			Zero,Overflow: buffer std_logic);
+			Opcode: in std_logic_vector(5 downto 0);
+			RegDst, Branch, MemRead, MemtoReg: out std_logic;
+			ALUSrc, RegWrite, Jump, MemWrite: out std_logic;
+			ALUOp, StackOps: out std_logic_vector(1 downto 0));
 	end component;
 	component registers is
 		port(
@@ -65,10 +47,35 @@ architecture structure of CPU is
 			StackOps: in std_logic_vector(1 downto 0);
 			RD1,RD2: out std_logic_vector(31 downto 0));
 	end component;
-	component InstMemory is
+	component SignExtend is
 		port(
-			Address: in std_logic_vector(31 downto 0);
-			ReadData: out std_logic_vector(31 downto 0));
+			x: in std_logic_vector(15 downto 0);
+			y: out std_logic_vector(31 downto 0));
+	end component;
+	component ShiftLeft2Jump is
+		port(
+			x: in std_logic_vector(3 downto 0);
+			y: in std_logic_vector(25 downto 0);
+			z: out std_logic_vector(32-1 downto 0));
+	end component;
+	component ALUControl is
+		port(
+			ALUOp: in std_logic_vector(1 downto 0);
+			Funct: in std_logic_vector(5 downto 0);
+			Operation: out std_logic_vector(3 downto 0));
+	end component;
+	component ALU32 is
+		generic(n: natural := 32);
+		port(
+			a,b: in std_logic_vector(n-1 downto 0);
+			Oper: in std_logic_vector(3 downto 0);
+			Result: buffer std_logic_vector(n-1 downto 0);
+			Zero,Overflow: buffer std_logic);
+	end component;
+	component ShiftLeft2 is
+		port(
+			x: in std_logic_vector(31 downto 0);
+			y: out std_logic_vector(31 downto 0));
 	end component;
 	component DataMemory is
 		port(
@@ -77,19 +84,6 @@ architecture structure of CPU is
 			MemRead,MemWrite,CLK: in std_logic;
 			StackOps: in std_logic_vector(1 downto 0);
 			ReadData: out std_logic_vector(31 downto 0));
-	end component;
-	component ALUControl is
-		port(
-			ALUOp: in std_logic_vector(1 downto 0);
-			Funct: in std_logic_vector(5 downto 0);
-			Operation: out std_logic_vector(3 downto 0));
-	end component;
-	component Control is
-		port(
-			Opcode: in std_logic_vector(5 downto 0);
-			RegDst, Branch, MemRead, MemtoReg: out std_logic;
-			ALUSrc, RegWrite, Jump, MemWrite: out std_logic;
-			ALUOp, StackOps: out std_logic_vector(1 downto 0));
 	end component;
 
 	-- Declare Signals based on Single Cycle CPU
@@ -250,11 +244,7 @@ begin
 			Result=>BranchAddress,
 			Zero=>open,
 			Overflow=>open);
-	AndForBranch: And2
-		port map(
-			Branch,
-			Zero,
-			BranchOpResult);
+	BranchOpResult <= Branch and Zero;
 	MuxForBranchOrPCPlus4: mux
 		generic map(32)
 		port map(

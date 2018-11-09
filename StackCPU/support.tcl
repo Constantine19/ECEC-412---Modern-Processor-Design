@@ -2,7 +2,6 @@ proc compileall {} {
 	vcom -work work ALU1.vhd
 	vcom -work work ALU32.vhd
 	vcom -work work ALUControl.vhd
-	vcom -work work And2.vhd
 	vcom -work work Control.vhd
 	vcom -work work CPU.vhd
 	vcom -work work DataMemory.vhd
@@ -61,7 +60,7 @@ proc simstart {} {
 }
 proc simloadexample1 {} {
 	simreset
-	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 15 -filldata {8C 08 00 00 8C 09 00 04 01 09 50 20 AD 20 00 08} /cpu/InstMem/memFile
+	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 15 -filldata {8C 08 00 00 8C 09 00 04 01 09 50 20 AC 0A 00 08} /cpu/InstMem/memFile
 }
 proc simloadexample2 {} {
 	simreset
