@@ -111,7 +111,8 @@ architecture structure of CPU is
 		JumpAddress,
 		StackOpOffset,
 		SelectedAluSrc2,
-		MemAddress:
+		MemAddress,
+		RegWriteData:
 	std_logic_vector(31 downto 0);
 	signal
 		SelectedWriteReg:
@@ -185,7 +186,7 @@ begin
 			RR1=>Instruction(25 downto 21),
 			RR2=>Instruction(20 downto 16),
 			WR=>SelectedWriteReg,
-			WD=>MemWriteData,
+			WD=>RegWriteData,
 			RegWrite=>RegWrite,
 			StackOps=>StackOps,
 			Clk=>clk,
@@ -270,13 +271,6 @@ begin
 			z=>NextPC);
 
 	-- Memory
-	MuxForMemWriteData: mux
-		generic map(32)
-		port map(
-			x=>AluResult,
-			y=>MemReadData,
-			sel=>MemtoReg,
-			z=>MemWriteData);
 	MuxForMemWriteStackOp: mux
 		generic map(32)
 		port map(
@@ -302,5 +296,14 @@ begin
 			CLK=>DelayedClock,
 			StackOps=>StackOps,
 			ReadData=>MemReadData);
+
+	-- Write Back
+	MuxForWriteBackData: mux
+		generic map(32)
+		port map(
+			x=>AluResult,
+			y=>MemReadData,
+			sel=>MemtoReg,
+			z=>RegWriteData);
 
 end structure;

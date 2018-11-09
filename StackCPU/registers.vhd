@@ -28,14 +28,7 @@ begin
         		end if;
         	end if;
         end if;
-
-        -- Write stack
-        if clk='0' and clk'event then
-        	if StackOps(1)='1' then
-        		regFile(to_integer(unsigned(RR1))) <= WS;
-        	end if;
-        end if;
-
+        
         -- Read registers
     	RD1 <= regFile(to_integer(unsigned(RR1)));
     	RD2 <= regFile(to_integer(unsigned(RR2)));

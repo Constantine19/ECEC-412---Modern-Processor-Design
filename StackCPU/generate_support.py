@@ -229,10 +229,10 @@ support_script = '\n'.join([
 
     # Programs
     program('example1', [
-        0x8D, 0x00, 0x00, 0x00, # lw $t0 $zero 0
-        0x8D, 0x20, 0x00, 0x04, # lw $t1 $zero 4
-        0x01, 0x49, 0x10, 0x20, # add $t2 $t1 $t0
-        0xAD, 0x40, 0x00, 0x08  # sw $t1 $zero 8
+        0x8C, 0x08, 0x00, 0x00, # lw $t0 $zero 0
+        0x8C, 0x09, 0x00, 0x04, # lw $t1 $zero 4
+        0x01, 0x09, 0x50, 0x20, # add $t2 $t1 $t0
+        0xAD, 0x20, 0x00, 0x08  # sw $t1 $zero 8
     ]),
     program('example2', [
         0xEB, 0x00, 0x00, 0x04, # push 4
@@ -240,7 +240,7 @@ support_script = '\n'.join([
     ]),
 
     # Run for 10 clock cycles
-    runfor(4)
+    runfor(5)
 ])
 
 # Write support script
