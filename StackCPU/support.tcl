@@ -17,7 +17,7 @@ proc compileall {} {
 	vcom -work work SignExtend.vhd
 }
 proc simset {} {
-	force -freeze sim:/cpu/clk 1 0, 0 {50 ms} -r 100ms
+	force -freeze sim:/cpu/clk 1 0, 0 {50 ns} -r 100ns
 	force -freeze sim:/cpu/NextPC 32'h0 0 -cancel 10
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 0 -filldata {00000000} /cpu/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 8 -endaddress 10 -filldata {00000000 00000004 00000004} /cpu/Registers1/regFile
@@ -47,15 +47,17 @@ proc simstart {} {
 	add wave -group "Control Signals" -color "Orange" -label "RegWrte" "sim:/cpu/Controller/RegWrite"
 	add wave -group "Control Signals" -color "Orange" -label "Jump" "sim:/cpu/Controller/Jump"
 	add wave -group "Control Signals" -color "Orange" -label "ALUOp" "sim:/cpu/Controller/ALUOp"
-	add wave -group "Control Signals" -color "Orange" -label "StackOps" "sim:/cpu/Controller/StackOps"
+	add wave -group "Control Signals" -color "Orange" -label "StackOp" "sim:/cpu/Controller/StackOp"
+	add wave -group "Control Signals" -color "Orange" -label "StackPushPop" "sim:/cpu/Controller/StackPushPop"
 	add wave -group "Control Signals" -color "Orange" -label "StackPop" "sim:/cpu/StackPop"
 	add wave -group "Register Data" -color "Cyan" -label "Read Address 1" "sim:/cpu/Registers1/RR1"
 	add wave -group "Register Data" -color "Cyan" -label "Read Address 2" "sim:/cpu/Registers1/RR2"
 	add wave -group "Register Data" -color "Cyan" -label "Write Address" "sim:/cpu/Registers1/WR"
 	add wave -group "Register Data" -color "Cyan" -label "Write Data" "sim:/cpu/Registers1/WD"
-	add wave -group "Register Data" -color "Cyan" -label "Write Stack" "sim:/cpu/Registers1/WS"
 	add wave -group "Register Data" -color "Cyan" -label "Read Data 1" "sim:/cpu/Registers1/RD1"
 	add wave -group "Register Data" -color "Cyan" -label "Read Data 2" "sim:/cpu/Registers1/RD2"
+	add wave -group "Tertiary Signals" -color "Green" -label "Sign Extended Value" "sim:/cpu/MakeImmediate/y"
+	add wave -group "Tertiary Signals" -color "Green" -label "Alu Control" "sim:/cpu/ALUControl1/Operation"
 	simset
 }
 proc simloadexample1 {} {
@@ -67,5 +69,5 @@ proc simloadexample2 {} {
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {EB 00 00 04 ED 00 00 00} /cpu/InstMem/memFile
 }
 proc simrun {} {
-	run 500ms
+	run 500ns
 }

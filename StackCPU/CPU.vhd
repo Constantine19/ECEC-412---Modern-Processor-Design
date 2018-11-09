@@ -35,17 +35,16 @@ architecture structure of CPU is
 	component Control is
 		port(
 			Opcode: in std_logic_vector(5 downto 0);
-			RegDst, Branch, MemRead, MemtoReg: out std_logic;
-			ALUSrc, RegWrite, Jump, MemWrite: out std_logic;
-			ALUOp, StackOps: out std_logic_vector(1 downto 0));
+			RegDst, Branch, MemRead, MemtoReg, ALUSrc, RegWrite: out std_logic;
+			Jump, MemWrite, StackOp, StackPushPop: out std_logic;
+			ALUOp: out std_logic_vector(1 downto 0));
 	end component;
 	component registers is
 		port(
-			RR1,RR2,WR: in std_logic_vector(4 downto 0);
-			WD,WS: in std_logic_vector(31 downto 0);
-			Clk,RegWrite: in std_logic;
-			StackOps: in std_logic_vector(1 downto 0);
-			RD1,RD2: out std_logic_vector(31 downto 0));
+			RR1, RR2, WR: in std_logic_vector(4 downto 0);
+			WD: in std_logic_vector(31 downto 0);
+			Clk, RegWrite, StackOp, StackPushPop: in std_logic;
+			RD1, RD2: out std_logic_vector(31 downto 0));
 	end component;
 	component SignExtend is
 		port(
@@ -81,8 +80,7 @@ architecture structure of CPU is
 		port(
 			WriteData: in std_logic_vector(31 downto 0);
 			Address: in std_logic_vector(31 downto 0);
-			MemRead,MemWrite,CLK: in std_logic;
-			StackOps: in std_logic_vector(1 downto 0);
+			MemRead, MemWrite, CLK, StackOp, StackPushPop: in std_logic;
 			ReadData: out std_logic_vector(31 downto 0));
 	end component;
 
@@ -120,14 +118,15 @@ architecture structure of CPU is
 		ALUSrc,
 		RegWrite,
 		Jump,
+		StackOp,
+		StackPushPop,
 		Zero,
 		BranchOpResult,
 		StackPop,
 		DelayedClock:
 	std_logic;
 	signal
-		ALUOp,
-		StackOps:
+		ALUOp:
 	std_logic_vector(1 downto 0);
 	signal
 		Operation:
@@ -166,8 +165,9 @@ begin
 			ALUSrc=>ALUSrc,
 			RegWrite=>RegWrite,
 			Jump=>Jump,
-			ALUOp=>ALUOp,
-			StackOps=>StackOps);
+			StackOp=>StackOp,
+			StackPushPop=>StackPushPop,
+			ALUOp=>ALUOp);
 	MuxForSelectedWriteReg: mux
 		generic map(5)
 		port map(
@@ -182,11 +182,11 @@ begin
 			WR=>SelectedWriteReg,
 			WD=>RegWriteData,
 			RegWrite=>RegWrite,
-			StackOps=>StackOps,
+			StackOp=>StackOp,
+			StackPushPop=>StackPushPop,
 			Clk=>clk,
 			RD1=>RegisterData1,
-			RD2=>RegisterData2,
-			WS=>AluResult);
+			RD2=>RegisterData2);
 	MakeImmediate: SignExtend
 		port map(
 			Instruction(15 downto 0),
@@ -210,14 +210,14 @@ begin
 		port map(
 			x=>four,
 			y=>neg_four,
-			sel=>StackOps(1),
+			sel=>StackPushPop,
 			z=>StackOpOffset);
 	MuxForSelectedAluSrc2: mux
 		generic map(32)
 		port map(
 			x=>ImmediateOrReg,
 			y=>StackOpOffset,
-			sel=>StackOps(0),
+			sel=>StackOp,
 			z=>SelectedAluSrc2);
 	ALUControl1: ALUControl
 		port map(
@@ -266,9 +266,9 @@ begin
 		port map(
 			x=>RegisterData2,
 			y=>SignExtendedImmediate,
-			sel=>StackOps(0),
+			sel=>StackOp,
 			z=>MemWriteData);
-	StackPop <= StackOps(0) and (not StackOps(1));
+	StackPop <= StackOp and (not StackPushPop);
 	MuxForStackPop: mux
 		generic map(32)
 		port map(
@@ -284,7 +284,8 @@ begin
 			MemRead=>MemRead,
 			MemWrite=>MemWrite,
 			CLK=>DelayedClock,
-			StackOps=>StackOps,
+			StackOp=>StackOp,
+			StackPushPop=>StackPushPop,
 			ReadData=>MemReadData);
 
 	-- Write Back

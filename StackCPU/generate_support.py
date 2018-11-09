@@ -99,7 +99,7 @@ def clock(signal):
 
     :return: declaration tcl command
     """
-    return 'force -freeze '+signal+' 1 0, 0 {50 ms} -r 100ms'
+    return 'force -freeze '+signal+' 1 0, 0 {50 ns} -r 100ns'
 
 def signal_for(time, signal, value):
     """
@@ -160,7 +160,7 @@ def runfor(clocks):
     :return: tcl procedure
     """
     return procedure('simrun', [
-        f'run {100*clocks}ms'
+        f'run {100*clocks}ns'
     ])
 
 # ----------------------------------- SCRIPT -----------------------------------
@@ -213,7 +213,8 @@ support_script = '\n'.join([
             ('RegWrte', f'sim:{CONTROLLER}/RegWrite'),
             ('Jump', f'sim:{CONTROLLER}/Jump'),
             ('ALUOp', f'sim:{CONTROLLER}/ALUOp'),
-            ('StackOps', f'sim:{CONTROLLER}/StackOps'),
+            ('StackOp', f'sim:{CONTROLLER}/StackOp'),
+            ('StackPushPop', f'sim:{CONTROLLER}/StackPushPop'),
             ('StackPop', f'sim:/cpu/StackPop')
         ]),
         wave_group('Register Data', 'Cyan', [
@@ -221,9 +222,12 @@ support_script = '\n'.join([
             ('Read Address 2', f'sim:{REGISTER}/RR2'),
             ('Write Address', f'sim:{REGISTER}/WR'),
             ('Write Data', f'sim:{REGISTER}/WD'),
-            ('Write Stack', f'sim:{REGISTER}/WS'),
             ('Read Data 1', f'sim:{REGISTER}/RD1'),
             ('Read Data 2', f'sim:{REGISTER}/RD2')
+        ]),
+        wave_group('Tertiary Signals', 'Green', [
+            ('Sign Extended Value', 'sim:/cpu/MakeImmediate/y'),
+            ('Alu Control', 'sim:/cpu/ALUControl1/Operation')
         ])
     ]),
 
