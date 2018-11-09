@@ -67,7 +67,7 @@ architecture structure of CPU is
 	            -- WRIn
 	            WRIn: in std_logic_vector(4 downto 0);
 	            -- RD1, RD2, Immediate
-	            RD1,RD2,Immediate,PCPlus4: in std_logic_vector(31 downto 0);
+	            RD1,RD2In,ImmediateIn,PCPlus4: in std_logic_vector(31 downto 0);
 	        -- Outputs
 	            -- MemReadOut, MemtoRegOut, MemWriteOut
 	            MemReadOut, MemtoRegOut, MemWriteOut: out std_logic;
@@ -76,7 +76,30 @@ architecture structure of CPU is
 	            -- WROut
 	            WROut: out std_logic_vector(4 downto 0);
 	            -- ALU Result
-	            ALUResult, NextPC: out std_logic_vector(31 downto 0)
+	            ALUResult, NextPC, RD2Out, ImmediateOut: out std_logic_vector(31 downto 0)
+	    );
+	end component;
+
+	component MEM_Stage is
+	    port(
+	        -- Inputs
+	            -- CLK
+	            CLK: in std_logic;
+	            -- MemReadIn, MemtoRegIn, MemWriteIn
+	            MemRead, MemWrite: in std_logic;
+	            -- RegWriteIn, StackOpIn, StackPushPopIn
+	            RegWriteIn, MemtoRegIn, StackOpIn, StackPushPopIn: in std_logic;
+	            -- WRIn
+	            WRIn: in std_logic_vector(4 downto 0);
+	            -- ALU Result
+	            RD2, Immediate, ALUResult, NextPCIn: out std_logic_vector(31 downto 0);
+	        -- Outputs
+	            -- RegWriteOut, StackOpOut, StackPushPopOut
+	            RegWriteOut, MemtoRegOut, StackOpOut, StackPushPopOut: out std_logic;
+	            -- WROut
+	            WROut: out std_logic_vector(4 downto 0);
+	            -- Next PC Out
+	            NextPCOut: out std_logic_vector(31 downto 0)
 	    );
 	end component;
 
@@ -87,10 +110,13 @@ architecture structure of CPU is
 		PCPlus4_ID,
 		RD1_ID,
 		RD2_ID,
+		RD2_EX,
 		Immediate_ID,
+		Immediate_EX,
 		JumpAddress_ID,
 		ALUResult_EX,
 		NextPC_EX,
+		NextPC_MEM,
 		WD_WB,
 		WS_WB:
 	std_logic_vector(31 downto 0);
@@ -100,6 +126,7 @@ architecture structure of CPU is
 	signal
 		WR_ID,
 		WR_EX,
+		WR_MEM,
 		WR_WB:
 	std_logic_vector(4 downto 0);
 	signal
@@ -112,17 +139,21 @@ architecture structure of CPU is
 		MemRead_EX,
 		MemtoReg_ID,
 		MemtoReg_EX,
+		MemtoReg_MEM
 		MemWrite_ID,
 		MemWrite_EX,
 		ALUSrc_ID,
 		RegWrite_ID,
 		RegWrite_EX,
+		RegWrite_MEM,
 		RegWrite_WB,
 		StackOp_ID,
 		StackOp_EX,
+		StackOp_MEM,
 		StackOp_WB,
 		StackPushPop_ID,
 		StackPushPop_EX,
+		StackPushPop_MEM,
 		StackPushPop_WB:
 	std_logic;
 begin
@@ -190,8 +221,8 @@ begin
 			WRIn=>WR_ID,
 			-- RD1, RD2, Immediate
 			RD1=>RD1_ID,
-			RD2=>RD2_ID,
-			Immediate=>Immediate_ID,
+			RD2In=>RD2_ID,
+			ImmediateIn=>Immediate_ID,
 			PCPlus4=>PCPlus4_ID,
 		-- Outputs
 			-- MemReadOut, MemtoRegOut, MemWriteOut
@@ -206,7 +237,39 @@ begin
 			WROut=>WR_EX,
 			-- ALU Result
 			ALUResult=>ALUResult_EX,
-			NextPC=>NextPC_EX
+			NextPC=>NextPC_EX,
+			RD2Out=>RD2_EX,
+			ImmediateOut=>Immediate_EX
+		);
+
+	MEMStage: MEM_Stage
+		port map(
+			CLK=>clk,
+			-- MemReadIn, MemtoRegIn, MemWriteIn
+			MemRead=>MemRead_EX,
+			MemWrite=>MemWrite_EX,
+			-- RegWriteIn, StackOpIn, StackPushPopIn
+			RegWriteIn=>RegWrite_EX,
+			MemtoRegIn=>MemtoReg_EX,
+			StackOpIn=>StackOp_EX,
+			StackPushPopIn=>StackPushPop_EX,
+			-- WRIn
+			WRIn=>WR_EX,
+			-- ALU Result
+			RD2=>RD2_EX,
+			Immediate=>Immediate_EX,
+			ALUResult=>ALUResult_EX,
+			NextPCIn=>NextPC_EX,
+		-- Outputs
+			-- RegWriteOut, StackOpOut, StackPushPopOut
+			RegWriteOut=>RegWrite_MEM,
+			MemtoRegOut=>MemtoReg_MEM,
+			StackOpOut=>StackOp_MEM,
+			StackPushPopOut=>StackPushPop_MEM,
+			-- WROut
+			WROut=>WR_MEM
+			-- Next PC Out
+			NextPCOut=>NextPC_MEM
 		);
 
 end structure;

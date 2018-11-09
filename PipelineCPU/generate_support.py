@@ -6,7 +6,7 @@ import re
 
 # Constants
 INSTRUCTION_MEMORY='/cpu/IFStage/InstMem/memFile'
-DATA_MEMORY='/cpu/DataMem/memFile'
+DATA_MEMORY='/cpu/MEMStage/DataMem/memFile'
 REGISTER='/cpu/IDStage/Registers1'
 REGISTER_MEMORY=f'{REGISTER}/regFile'
 CONTROLLER = '/cpu/Controller'
@@ -180,10 +180,10 @@ support_script = '\n'.join([
             (20, [0x0000000C, 0x00000005, 0x00000008, 0x00000003]),
             (29, [0x000000F8])
         ]),
-        # mem_load(DATA_MEMORY, 0, '02X', [
-        #     0x00, 0x00, 0x00, 0x04,
-        #     0x00, 0x00, 0x00, 0x08
-        # ]),
+        mem_load(DATA_MEMORY, 0, '02X', [
+            0x00, 0x00, 0x00, 0x04,
+            0x00, 0x00, 0x00, 0x08
+        ]),
         mem_clear(INSTRUCTION_MEMORY)
     ])),
     procedure('simreset', [
@@ -197,7 +197,8 @@ support_script = '\n'.join([
             ('Clock', 'sim:/cpu/clk'),
         ]),
         wave_group('Mem Files', 'Magenta', [
-            ('Register', REGISTER_MEMORY)
+            ('Register', REGISTER_MEMORY),
+            ('Data Memory', DATA_MEMORY)
         ]),
         wave_group('IF Stage', 'White', [
             ('Next PC', 'sim:/cpu/IFStage/NextPC'),
