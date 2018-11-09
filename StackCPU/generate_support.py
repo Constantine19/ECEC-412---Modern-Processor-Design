@@ -177,7 +177,8 @@ support_script = '\n'.join([
         mem_load_all(REGISTER_MEMORY, '08X', [
             ( 0, [0x00000000]),
             ( 8, [0x00000000, 0x00000004, 0x00000004]),
-            (20, [0x0000000C, 0x00000005, 0x00000008, 0x00000003])
+            (20, [0x0000000C, 0x00000005, 0x00000008, 0x00000003]),
+            (29, [0x000000F8])
         ]),
         mem_load(DATA_MEMORY, 0, '02X', [
             0x00, 0x00, 0x00, 0x04,
@@ -222,12 +223,19 @@ support_script = '\n'.join([
             ('Read Address 2', f'sim:{REGISTER}/RR2'),
             ('Write Address', f'sim:{REGISTER}/WR'),
             ('Write Data', f'sim:{REGISTER}/WD'),
+            ('Write Stack', f'sim:{REGISTER}/WS'),
             ('Read Data 1', f'sim:{REGISTER}/RD1'),
             ('Read Data 2', f'sim:{REGISTER}/RD2')
         ]),
         wave_group('Tertiary Signals', 'Green', [
             ('Sign Extended Value', 'sim:/cpu/MakeImmediate/y'),
             ('Alu Control', 'sim:/cpu/ALUControl1/Operation')
+        ]),
+        wave_group('Main ALU', 'Turquoise', [
+            ('Input A', 'sim:/cpu/MainALU/a'),
+            ('Input B', 'sim:/cpu/MainALU/b'),
+            ('Result', 'sim:/cpu/MainALU/Result'),
+            ('Zero', 'sim:/cpu/MainALU/Zero')
         ])
     ]),
 
@@ -240,7 +248,7 @@ support_script = '\n'.join([
     ]),
     program('example2', [
         0xEB, 0x00, 0x00, 0x04, # push 4
-        0xED, 0x00, 0x00, 0x00  # pop $t0
+        0xEC, 0x08, 0x00, 0x00  # pop $t0
     ]),
 
     # Run for 10 clock cycles

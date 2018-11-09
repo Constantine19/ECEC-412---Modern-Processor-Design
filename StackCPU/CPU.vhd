@@ -42,7 +42,7 @@ architecture structure of CPU is
 	component registers is
 		port(
 			RR1, RR2, WR: in std_logic_vector(4 downto 0);
-			WD: in std_logic_vector(31 downto 0);
+			WD, WS: in std_logic_vector(31 downto 0);
 			Clk, RegWrite, StackOp, StackPushPop: in std_logic;
 			RD1, RD2: out std_logic_vector(31 downto 0));
 	end component;
@@ -80,7 +80,7 @@ architecture structure of CPU is
 		port(
 			WriteData: in std_logic_vector(31 downto 0);
 			Address: in std_logic_vector(31 downto 0);
-			MemRead, MemWrite, CLK, StackOp, StackPushPop: in std_logic;
+			MemRead, MemWrite, CLK: in std_logic;
 			ReadData: out std_logic_vector(31 downto 0));
 	end component;
 
@@ -181,6 +181,7 @@ begin
 			RR2=>Instruction(20 downto 16),
 			WR=>SelectedWriteReg,
 			WD=>RegWriteData,
+			WS=>AluResult, -- Update Stack Pointer
 			RegWrite=>RegWrite,
 			StackOp=>StackOp,
 			StackPushPop=>StackPushPop,
@@ -208,8 +209,8 @@ begin
 	MuxForStackOfset: mux
 		generic map(32)
 		port map(
-			x=>four,
-			y=>neg_four,
+			x=>neg_four,
+			y=>four,
 			sel=>StackPushPop,
 			z=>StackOpOffset);
 	MuxForSelectedAluSrc2: mux
@@ -284,8 +285,6 @@ begin
 			MemRead=>MemRead,
 			MemWrite=>MemWrite,
 			CLK=>DelayedClock,
-			StackOp=>StackOp,
-			StackPushPop=>StackPushPop,
 			ReadData=>MemReadData);
 
 	-- Write Back

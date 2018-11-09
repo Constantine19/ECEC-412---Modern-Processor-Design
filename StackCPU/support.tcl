@@ -22,6 +22,7 @@ proc simset {} {
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 0 -filldata {00000000} /cpu/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 8 -endaddress 10 -filldata {00000000 00000004 00000004} /cpu/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 20 -endaddress 23 -filldata {0000000C 00000005 00000008 00000003} /cpu/Registers1/regFile
+	mem load -filltype value -fillradix hexadecimal -startaddress 29 -endaddress 29 -filldata {000000F8} /cpu/Registers1/regFile
 	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {00 00 00 04 00 00 00 08} /cpu/DataMem/memFile
 	mem load -filltype value -fillradix hexadecimal -filldata {00} /cpu/InstMem/memFile
 }
@@ -54,10 +55,15 @@ proc simstart {} {
 	add wave -group "Register Data" -color "Cyan" -label "Read Address 2" "sim:/cpu/Registers1/RR2"
 	add wave -group "Register Data" -color "Cyan" -label "Write Address" "sim:/cpu/Registers1/WR"
 	add wave -group "Register Data" -color "Cyan" -label "Write Data" "sim:/cpu/Registers1/WD"
+	add wave -group "Register Data" -color "Cyan" -label "Write Stack" "sim:/cpu/Registers1/WS"
 	add wave -group "Register Data" -color "Cyan" -label "Read Data 1" "sim:/cpu/Registers1/RD1"
 	add wave -group "Register Data" -color "Cyan" -label "Read Data 2" "sim:/cpu/Registers1/RD2"
 	add wave -group "Tertiary Signals" -color "Green" -label "Sign Extended Value" "sim:/cpu/MakeImmediate/y"
 	add wave -group "Tertiary Signals" -color "Green" -label "Alu Control" "sim:/cpu/ALUControl1/Operation"
+	add wave -group "Main ALU" -color "Turquoise" -label "Input A" "sim:/cpu/MainALU/a"
+	add wave -group "Main ALU" -color "Turquoise" -label "Input B" "sim:/cpu/MainALU/b"
+	add wave -group "Main ALU" -color "Turquoise" -label "Result" "sim:/cpu/MainALU/Result"
+	add wave -group "Main ALU" -color "Turquoise" -label "Zero" "sim:/cpu/MainALU/Zero"
 	simset
 }
 proc simloadexample1 {} {
@@ -66,7 +72,7 @@ proc simloadexample1 {} {
 }
 proc simloadexample2 {} {
 	simreset
-	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {EB 00 00 04 ED 00 00 00} /cpu/InstMem/memFile
+	mem load -filltype value -fillradix hexadecimal -startaddress 0 -endaddress 7 -filldata {EB 00 00 04 EC 08 00 00} /cpu/InstMem/memFile
 }
 proc simrun {} {
 	run 500ns
