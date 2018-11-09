@@ -5,6 +5,7 @@ proc compileall {} {
 	vcom -work work Control.vhd
 	vcom -work work CPU.vhd
 	vcom -work work DataMemory.vhd
+	vcom -work work EX_Stage.vhd
 	vcom -work work ID_Stage.vhd
 	vcom -work work IF_Stage.vhd
 	vcom -work work InstMemory.vhd
@@ -49,6 +50,10 @@ proc simstart {} {
 	add wave -group "ID Stage" -color "Orange" -label "Read Data 1" "sim:/cpu/IDStage/RD1"
 	add wave -group "ID Stage" -color "Orange" -label "Read Data 2" "sim:/cpu/IDStage/RD2"
 	add wave -group "ID Stage" -color "Orange" -label "Write Address" "sim:/cpu/IDStage/WR"
+	add wave -group "EX Stage" -color "Turquoise" -label "Input A" "sim:/cpu/EXStage/MainALU/a"
+	add wave -group "EX Stage" -color "Turquoise" -label "Input B" "sim:/cpu/EXStage/MainALU/b"
+	add wave -group "EX Stage" -color "Turquoise" -label "Result" "sim:/cpu/EXStage/MainALU/Result"
+	add wave -group "EX Stage" -color "Turquoise" -label "Zero" "sim:/cpu/EXStage/MainALU/Zero"
 	simset
 }
 proc simloadexample {} {

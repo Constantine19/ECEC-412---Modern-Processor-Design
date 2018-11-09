@@ -18,7 +18,8 @@ entity ID_Stage is
             WR: out std_logic_vector(4 downto 0);
             Jump, Branch, MemRead, MemtoReg, MemWrite: out std_logic;
             ALUSrc, RegWriteOut, StackOpOut, StackPushPopOut: out std_logic;
-            ALUOp: out std_logic_vector(1 downto 0)
+            ALUOp: out std_logic_vector(1 downto 0);
+            Funct: out std_logic_vector(5 downto 0)
     );
 end ID_Stage;
 
@@ -163,4 +164,5 @@ begin
     JumpAddressReg: reg generic map(32) port map(CLK, JumpAddressSignal, JumpAddress);
 
     PCPlus4Reg: reg generic map(32) port map(CLK, PCPlus4In, PCPlus4Out);
+    FunctReg: reg generic map(6) port map(CLK, Instruction(5 downto 0), Funct);
 end arch;

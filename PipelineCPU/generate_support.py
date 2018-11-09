@@ -216,6 +216,12 @@ support_script = '\n'.join([
             ('Read Data 1', 'sim:/cpu/IDStage/RD1'),
             ('Read Data 2', 'sim:/cpu/IDStage/RD2'),
             ('Write Address', 'sim:/cpu/IDStage/WR')
+        ]),
+        wave_group('EX Stage', 'Turquoise', [
+            ('Input A', 'sim:/cpu/EXStage/MainALU/a'),
+            ('Input B', 'sim:/cpu/EXStage/MainALU/b'),
+            ('Result', 'sim:/cpu/EXStage/MainALU/Result'),
+            ('Zero', 'sim:/cpu/EXStage/MainALU/Zero')
         ])
     ]),
 
