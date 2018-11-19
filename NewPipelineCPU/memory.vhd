@@ -65,7 +65,7 @@ entity romemory is
         data: out std_logic_vector(8*wordlen-1 downto 0));
 end entity;
 
-architecture arch of readonlymem is
+architecture arch of romemory is
     subtype byte is std_logic_vector(7 downto 0);
     type memarray is array (memsize downto 0) of byte;
     signal memory: memarray;

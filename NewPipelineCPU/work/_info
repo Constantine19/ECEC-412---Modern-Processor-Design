@@ -8,81 +8,163 @@ z2
 !i10f 100
 cModel Technology
 Z0 dC:/Users/akans/OneDrive/Documents/University/Junior 18 - 19/Fall/ECEC-412/ECEC-412---Modern-Processor-Design/NewPipelineCPU
-Ereg
-Z1 w1542390384
-Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
-Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Ememory
+Z1 w1542656695
+Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
 R0
-Z4 8reg.vhd
-Z5 Freg.vhd
+Z5 8memory.vhd
+Z6 Fmemory.vhd
+l0
+L6
+V@fX5bX<2AeO8PGQ9lE4Id3
+!s100 hlFFiJ5JOhKJAj2i><Y@Q0
+Z7 OP;C;10.4a;61
+32
+Z8 !s110 1542660465
+!i10b 1
+Z9 !s108 1542660465.000000
+Z10 !s90 -reportprogress|300|-work|work|memory.vhd|reg.vhd|
+Z11 !s107 reg.vhd|memory.vhd|
+!i113 1
+Z12 o-work work -O0
+Z13 tExplicit 1
+Aarch
+R2
+R3
+R4
+Z14 DEx4 work 6 memory 0 22 @fX5bX<2AeO8PGQ9lE4Id3
+l23
+L19
+Z15 V?HFL0bTizAcB>=fDOaDE:3
+Z16 !s100 XaW5mOaGTCLonDaJT5@zf3
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Ereg
+Z17 w1542390384
+R3
+R4
+R0
+Z18 8reg.vhd
+Z19 Freg.vhd
 l0
 L33
 VA9kH7Vg2A>IkdX^^hAT<A2
 !s100 Z4SG=Hik>2SGW;C1lWBAi3
-Z6 OP;C;10.4a;61
-32
-Z7 !s110 1542390409
-!i10b 1
-Z8 !s108 1542390408.000000
-Z9 !s90 -reportprogress|300|-work|work|reg.vhd|
-Z10 !s107 reg.vhd|
-!i113 1
-Z11 o-work work -O0
-Z12 tExplicit 1
-Aarch
-R2
-R3
-DEx4 work 3 reg 0 22 A9kH7Vg2A>IkdX^^hAT<A2
-l47
-L41
-VZ;9^=KYPmaCh?_VmVC;m;1
-!s100 Jg7c<f<3dfT2zUF<;R:Ic0
-R6
-32
 R7
-!i10b 1
+32
 R8
+!i10b 1
 R9
 R10
-!i113 1
 R11
+!i113 1
 R12
-Ereg1
-R1
-R2
+R13
+Aarch
 R3
-R0
 R4
-R5
+Z20 DEx4 work 3 reg 0 22 A9kH7Vg2A>IkdX^^hAT<A2
+l47
+L41
+Z21 VZ;9^=KYPmaCh?_VmVC;m;1
+Z22 !s100 Jg7c<f<3dfT2zUF<;R:Ic0
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Ereg1
+R17
+R3
+R4
+R0
+R18
+R19
 l0
 L8
 V<CVnWlZ>^OZ:YRnGi;QSb0
 !s100 5F_e=>f5P7^GOk`[mOHdm1
-R6
-32
 R7
-!i10b 1
+32
 R8
+!i10b 1
 R9
 R10
-!i113 1
 R11
+!i113 1
 R12
+R13
+Aarch
+R3
+R4
+Z23 DEx4 work 4 reg1 0 22 <CVnWlZ>^OZ:YRnGi;QSb0
+l16
+L14
+Z24 Vhk]5j;1<kU:RZJ>f:FCQK3
+Z25 !s100 7F>l]T@@e:D7gD^ih]DH^0
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Eromemory
+R1
+R2
+R3
+R4
+R0
+R5
+R6
+l0
+L58
+VRJoGn?:i2gTaVm:n;UjJ63
+!s100 E65^lcVB8liIGho?a51T<1
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
 Aarch
 R2
 R3
-DEx4 work 4 reg1 0 22 <CVnWlZ>^OZ:YRnGi;QSb0
-l16
-L14
-Vhk]5j;1<kU:RZJ>f:FCQK3
-!s100 7F>l]T@@e:D7gD^ih]DH^0
-R6
-32
+R4
+Z26 DEx4 work 8 romemory 0 22 RJoGn?:i2gTaVm:n;UjJ63
+l72
+L68
+Z27 VDl4mK;Z`0W9gS2MlD3;3]1
+Z28 !s100 S_?MfM?oBQ3Wz70`64BE30
 R7
-!i10b 1
+32
 R8
+!i10b 1
 R9
 R10
-!i113 1
 R11
+!i113 1
 R12
+R13
