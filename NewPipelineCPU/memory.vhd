@@ -22,18 +22,26 @@ architecture arch of memory is
     signal memory: memarray;
 begin
     -- Write process
-    read_write_clock_process : process(clk, address)
+    write_process : process(clk)
         variable intaddr : integer;
     begin
         -- Convert address to integer
         intaddr := to_integer(unsigned(address));
 
-        -- Do on clock rising edge when write is enabled
-        on_write_enable_clock: if clk'event and clk='1' and write='1' then
+        -- On write enable clock
+        on_write_enable_clock : if clk'event and clk='1' and write='1' then
             write_bytes : for i in 0 to wordlen-1 loop
                 memory(intaddr + (wordlen - i)) <= wdata(8*i+7 downto 8*i);
             end loop;
         end if;
+    end process;
+
+    -- Read process
+    read_process : process(address)
+        variable intaddr : integer;
+    begin
+        -- Convert address to integer
+        intaddr := to_integer(unsigned(address));
 
         -- Read data
         read_bytes : for i in 0 to wordlen-1 loop
