@@ -1,85 +1,42 @@
--------------------------------- WRITABLE MEMORY -------------------------------
+-- Memory components
+-- Author:  Anshul Kharbanda
+-- Created: 11 - 19 - 2018
+------------------------------- READONLY MEMORY --------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity memory is
+-- Read only memory entity
+entity readonly_mem is
     generic(
-        wordlen : natural := 4;
-        addrlen : natural := 32;
-        memsize : natural := 256);
+        addr_size : natural := 32; -- Address size in bits
+        word_size : natural := 4;  -- Word size in bytes
+        data_size : natural := 256 -- Data size in bytes
+    );
     port(
-        clk : in std_logic;
-        address : in std_logic_vector(addrlen-1 downto 0);
-        wdata : in std_logic_vector(8*wordlen-1 downto 0);
-        write : in std_logic;
-        rdata : out std_logic_vector(8*wordlen-1 downto 0));
+        addr : in std_logic_vector(addr_size-1 downto 0);   -- Input address
+        data : out std_logic_vector(8*word_size-1 downto 0) -- Output data
+    );
 end entity;
 
-architecture arch of memory is
-    subtype byte is std_logic_vector(7 downto 0);
-    type memarray is array (memsize downto 0) of byte;
-    signal memory: memarray;
+-- Read only memory architecture
+architecture arch of readonly_mem is
+    -- Memory array
+    type memory_array is
+        array (0 to data_size-1)
+        of std_logic_vector(7 downto 0);
+    signal memory : memory_array;
 begin
-    -- Write process
-    write_process : process(clk)
-        variable intaddr : integer;
+    -- Read data process
+    read_data : process(addr)
+        variable int_addr : integer;
     begin
-        -- Convert address to integer
-        intaddr := to_integer(unsigned(address));
+        -- Integer addr
+        int_addr := to_integer(unsigned(addr));
 
-        -- On write enable clock
-        on_write_enable_clock : if clk'event and clk='1' and write='1' then
-            write_bytes : for i in 0 to wordlen-1 loop
-                memory(intaddr + (wordlen - i)) <= wdata(8*i+7 downto 8*i);
-            end loop;
-        end if;
-    end process;
-
-    -- Read process
-    read_process : process(address)
-        variable intaddr : integer;
-    begin
-        -- Convert address to integer
-        intaddr := to_integer(unsigned(address));
-
-        -- Read data
-        read_bytes : for i in 0 to wordlen-1 loop
-            rdata(8*i+7 downto 8*i) <= memory(intaddr + (wordlen - i));
-        end loop;
-    end process;
-end architecture;
-
-------------------------------- READ ONLY MEMORY -------------------------------
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-entity romemory is
-    generic(
-        wordlen : natural := 4;
-        addrlen : natural := 32;
-        memsize : natural := 256);
-    port(
-        address : in std_logic_vector(addrlen-1 downto 0);
-        data: out std_logic_vector(8*wordlen-1 downto 0));
-end entity;
-
-architecture arch of romemory is
-    subtype byte is std_logic_vector(7 downto 0);
-    type memarray is array (memsize downto 0) of byte;
-    signal memory: memarray;
-begin
-    -- Write process
-    read_process : process(address)
-        variable intaddr : integer;
-    begin
-        -- Convert address to integer
-        intaddr := to_integer(unsigned(address));
-
-        -- Read data
-        read_bytes : for i in 0 to wordlen-1 loop
-            data(8*i+7 downto 8*i) <= memory(intaddr + (wordlen - i));
+        -- Read bytes
+        read_bytes : for i in 0 to word_size-1 loop
+            data(8*i+7 downto 8*i) <= memory(int_addr + word_size - i - 1);
         end loop;
     end process;
 end architecture;
