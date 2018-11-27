@@ -3,8 +3,9 @@ vsim reg
 
 # Windows
 noview sim
-view transcript
-view wave
+noview objects
+view -dock transcript
+view -dock wave
 
 # Add waves
 add wave -color "Grey60"  -label "Clock"  "sim:/reg/clk"

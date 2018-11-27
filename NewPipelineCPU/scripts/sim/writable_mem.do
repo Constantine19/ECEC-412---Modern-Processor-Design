@@ -3,8 +3,10 @@ vsim writable_mem
 
 # Windows
 noview sim
-view transcript
-view wave
+noview objects
+view -dock transcript
+view -dock memory
+view -dock wave
 
 # Add waves
 add wave -group "CPU Clock" -color "Grey60" -label "Clock" "sim:/writable_mem/clk"
@@ -26,7 +28,9 @@ mem load -filltype value -fillradix hexadecimal -filldata {
 } -startaddress 0 -endaddress 128 "sim:/writable_mem/memory"
 
 # Add patterns
-force -freeze -repeat 100ns "sim:/writable_mem/clk" 0 0ns, 1 50ns
+force -freeze -repeat 100ns "sim:/writable_mem/clk" \
+    0 0ns, \
+    1 50ns
 force -freeze "sim:/writable_mem/addr" \
     32'h00000000 0ns, \
     32'h00000010 120ns, \
@@ -43,5 +47,5 @@ force -freeze "sim:/writable_mem/wdata" \
     32'h5C3E5EFF 720ns, \
     32'h432ABE22 820ns
 
-# Run for 600ns
+# Run for 1000ns
 run 1000ns
