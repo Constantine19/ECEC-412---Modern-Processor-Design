@@ -13,6 +13,48 @@ entity cpu is
 end entity;
 
 architecture arch of cpu is
+    -- Declare subtypes
+    subtype byte is std_logic_vector(7 downto 0);
+    subtype word is std_logic_vector(31 downto 0);
+    subtype reg_address is std_logic_vector(4 downto 0);
+
+    -- Declare components
+    component register_table is
+        generic(
+            addr_size :  natural := 5;
+            value_size : natural := 32;
+            table_size : natural := 32
+        );
+        port(
+            clk: in std_logic;
+            raddr1, raddr2, waddr: in std_logic_vector(addr_size-1 downto 0);
+            wvalue: in std_logic_vector(value_size-1 downto 0);
+            write, stackop: in std_logic;
+            rvalue1, rvalue2: out std_logic_vector(value_size-1 downto 0)
+        );
+    end component;
+    component readonly_mem is
+        generic(
+            addr_size : natural := 32; -- Address size in bits
+            word_size : natural := 4;  -- Word size in bytes
+            data_size : natural := 256 -- Data size in bytes
+        );
+        port(
+            addr : in std_logic_vector(addr_size-1 downto 0);   -- Input address
+            data : out std_logic_vector(8*word_size-1 downto 0) -- Output data
+        );
+    end component;
+
+    -- Signals
+    signal
+        wb_write_address
+    : reg_address;
+    signal
+        wb_write_value
+    : word;
+    signal
+        wb_write
+    : std_logic;
 begin
     -- Register Table
     -- Memory Store
