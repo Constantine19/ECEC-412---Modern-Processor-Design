@@ -7,9 +7,7 @@ use ieee.numeric_std.all;
 
 -- CPU Entity
 entity cpu is
-    port(
-        clk: in std_logic
-    );
+    port(clk: in std_logic);
 end entity;
 
 architecture arch of cpu is
@@ -33,31 +31,74 @@ architecture arch of cpu is
             rvalue1, rvalue2: out std_logic_vector(value_size-1 downto 0)
         );
     end component;
-    component readonly_mem is
+    component writable_mem is
         generic(
             addr_size : natural := 32; -- Address size in bits
             word_size : natural := 4;  -- Word size in bytes
             data_size : natural := 256 -- Data size in bytes
         );
         port(
-            addr : in std_logic_vector(addr_size-1 downto 0);   -- Input address
-            data : out std_logic_vector(8*word_size-1 downto 0) -- Output data
+            clk : in std_logic;
+            addr : in std_logic_vector(addr_size-1 downto 0);
+            wdata : in std_logic_vector(8*word_size-1 downto 0);
+            write : in std_logic;
+            rdata : out std_logic_vector(8*word_size-1 downto 0)
         );
     end component;
 
     -- Signals
     signal
-        wb_write_address
+        ID_read_address_1,
+        ID_read_address_2,
+        WB_write_address
     : reg_address;
     signal
-        wb_write_value
+        ID_read_value_1,
+        ID_read_value_2,
+        MEM_address,
+        MEM_write_data,
+        MEM_read_data,
+        WB_write_value
     : word;
     signal
-        wb_write
+        stackop,
+        MEM_write,
+        WB_write
     : std_logic;
 begin
     -- Register Table
+    register_table_map: register_table
+        generic map(
+            addr_size => 5,
+            value_size => 32,
+            table_size => 32
+        )
+        port map(
+            clk => clk,
+            raddr1 => ID_read_address_1,
+            raddr2 => ID_read_address_2,
+            waddr => WB_write_address,
+            wvalue => WB_write_value,
+            write => WB_write,
+            stackop => stackop,
+            rvalue1 => ID_read_value_1,
+            rvalue2 => ID_read_value_2
+        );
+
     -- Memory Store
+    memory_store: writable_mem
+        generic map(
+            addr_size => 32,
+            word_size => 4,
+            data_size => 256
+        )
+        port map(
+            clk => clk,
+            addr => MEM_address,
+            wdata => MEM_write_data,
+            write => MEM_write,
+            rdata => MEM_read_data
+        );
 
     -- IF STAGE
         -- Program Counter
@@ -81,7 +122,7 @@ begin
         -- Branch
 
     -- MEM STAGE
-        -- Memory
+        -- Handle Memory
 
     -- WB STAGE
         -- Write Register
