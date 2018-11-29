@@ -19,44 +19,32 @@ entity alu1 is
 end entity;
 
 -- Architecture of alu1
+-- TODO: Determine error with initial result
 architecture arch of alu1 is
-    -- Components
-    component add1 is
-        port(
-            a, b, cin: in std_logic;
-            sum, cout: out std_logic
-        );
-    end component;
-
-    -- Signals
-    signal atrue, btrue, sum: std_logic;
 begin
-    -- Map true values
-    atrue <= not a when oper(3)='1' else a;
-    btrue <= not b when oper(2)='1' else b;
-
-    -- Map adder signals
-    sum <= a xor b xor cin;
-    cout <= (a and b) or (a and cin) or (b and cin);
-
-    -- Selector process
-    select_res: process(oper, atrue, btrue)
+    select_operation : process(oper, a, b, cin, less)
     begin
-        case (oper(1 downto 0)) is
-            when "00" => -- AND
-                res <= atrue and btrue;
+        case oper is
+            when "0000" => -- AND
+                res <= a and b;
                 set <= 'U';
-            when "01" => -- OR
-                res <= atrue or btrue;
+            when "0001" => -- OR
+                res <= a or b;
                 set <= 'U';
-            when "10" => -- ADD/SUB
-                res <= sum;
+            when "0010" => -- ADD
+                res <= a xor b xor cin;
+                cout <= (a and b) or (a and cin) or (b and cin);
                 set <= 'U';
-            when "11" => -- SLT
+            when "0110" => -- SUB
+                res <= a xor (not b) xor cin;
+                cout <= (a and (not b)) or (a and cin) or ((not b) and cin);
+            when "0111" => -- SLT
+                set <= a xor (not b) xor cin;
+                cout <= (a and (not b)) or (a and cin) or ((not b) and cin);
                 res <= less;
-                set <= sum;
             when others =>
                 res <= 'U';
+                cout <= 'U';
                 set <= 'U';
         end case;
     end process;
@@ -77,7 +65,8 @@ entity alu is
     port (
         a, b: in std_logic_vector(n-1 downto 0);
         oper: in std_logic_vector(3 downto 0);
-        res: out std_logic_vector(n-1 downto 0)
+        res: buffer std_logic_vector(n-1 downto 0);
+        zero, overflow: buffer std_logic
     );
 end entity;
 
@@ -94,15 +83,32 @@ architecture arch of alu is
 
     -- Declare signals
     signal c: std_logic_vector(n downto 0);
-    signal set31: std_logic;
+    signal l31, l0: std_logic;
 begin
     -- Set first carry to binv (indicating subtract)
     c(0) <= oper(2);
 
     -- Generate alus
-    alu0: alu1 port map(a(0), b(0), c(0), set31, oper, res(0), c(1), open);
+    alu0 : alu1 port map(a(0), b(0), c(0), l0, oper, res(0), c(1), open);
     gen_alus_in_between : for i in 1 to n-2 generate
-        alui: alu1 port map(a(i), b(i), c(i), '0', oper, res(i), c(i+1), open);
+        alui : alu1 port map(a(i), b(i), c(i), '0', oper, res(i), c(i+1), open);
     end generate;
-    aluN: alu1 port map(a(n-1), b(n-1), c(n-1), '0', oper, res(n-1), c(n), set31);
+    aluN : alu1 port map(a(n-1), b(n-1), c(n-1), '0', oper, res(n-1), c(n), l31);
+
+    -- Compute zero
+    zero_reduce : process(res)
+        variable temp : std_logic;
+    begin
+        temp := '0';
+        identifier: for i in res'range loop
+            temp := temp or res(i);
+        end loop;
+        zero <= not temp;
+    end process;
+
+    -- Compute overflow
+    overflow <= c(n) xor c(n-1);
+
+    -- Wire 31-bit less value (or overflow) back around to 0-bit less value
+    l0 <= l31 xor overflow;
 end architecture;
