@@ -4,8 +4,8 @@ vsim mux
 # Windows
 noview sim
 noview objects
-view -dock transcript
-view -dock wave
+view transcript
+view wave
 
 # Add Waves
 add wave -group "Inputs" -color "Magenta" -label "X" "sim:/mux/x"

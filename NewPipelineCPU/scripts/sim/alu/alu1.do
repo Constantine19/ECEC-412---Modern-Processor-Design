@@ -4,8 +4,8 @@ vsim alu1
 # Windows
 noview sim
 noview objects
-view -dock transcript
-view -dock wave
+view transcript
+view wave
 
 # Add waves
 add wave -group "Inputs" -color "Magenta" -label "Input A" "sim:/alu1/a"

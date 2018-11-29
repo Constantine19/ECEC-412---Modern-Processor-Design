@@ -4,9 +4,9 @@ vsim readonly_mem
 # Windows
 noview sim
 noview objects
-view -dock transcript
-view -dock memory
-view -dock wave
+view transcript
+view memory
+view wave
 
 # Add waves
 add wave -color "Magenta" -label "Address" "sim:/readonly_mem/addr"

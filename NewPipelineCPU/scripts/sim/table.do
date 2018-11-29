@@ -4,9 +4,9 @@ vsim table
 # Windows
 noview sim
 noview objects
-view -dock transcript
-view -dock memory
-view -dock wave
+view transcript
+view memory
+view wave
 
 # Add waves
 add wave -group "CPU Clock" -color "Grey60" -label "Clock" "sim:/table/clk"
