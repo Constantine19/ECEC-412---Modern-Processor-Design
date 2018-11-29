@@ -20,6 +20,7 @@ begin
     -- IF STAGE
         -- Program Counter
         -- Branch Address Buffer
+        -- Fetch Instruction
 
     -- ID STAGE
         -- Jump
@@ -30,6 +31,10 @@ begin
 
     -- EX STAGE
         -- Compute Operands
+            -- SignExtend/Register2/Stack Push/Stack Pop
+            -- Forwarding Units
+            -- Stack Op
+            -- Stack Push Pop
         -- ALU Operation
         -- Branch
 

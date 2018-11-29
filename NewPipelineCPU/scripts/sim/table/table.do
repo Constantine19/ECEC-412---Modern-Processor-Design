@@ -27,9 +27,7 @@ mem load -filltype value -fillradix hexadecimal -filldata {
 } -startaddress 0 -endaddress 31 "sim:/table/table"
 
 # Add patterns
-force -freeze -repeat 100ns "sim:/table/clk" \
-    0 0ns, \
-    1 50ns
+force -freeze -repeat 100ns "sim:/table/clk" 0 0ns, 1 50ns
 force -freeze "sim:/table/addr" \
     32'h00000000 0ns, \
     32'h00000004 120ns, \
