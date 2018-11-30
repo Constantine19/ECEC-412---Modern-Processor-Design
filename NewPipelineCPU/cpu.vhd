@@ -124,7 +124,4 @@ begin
     -- MEM STAGE
         -- Handle Memory
 
-    -- WB STAGE
-        -- Write Register
-
 end architecture;
