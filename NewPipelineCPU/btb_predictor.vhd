@@ -33,6 +33,17 @@ architecture arch of btb_predictor is
             rvalue: out std_logic_vector(value_size-1 downto 0)
         );
     end component;
+    component alu is
+        generic (
+            n: natural := 32
+        );
+        port (
+            a, b: in std_logic_vector(n-1 downto 0);
+            oper: in std_logic_vector(3 downto 0);
+            res: buffer std_logic_vector(n-1 downto 0);
+            zero, overflow: buffer std_logic
+        );
+    end component;
 
     -- Declare signals
     signal
@@ -49,20 +60,20 @@ architecture arch of btb_predictor is
 
     -- Declare constnats
     constant four : std_logic_vector(31 downto 0) := (2=>'1', others=>'0');
-    constant add: std_logic_vector(3 downto 0) := "0010";
+    constant add : std_logic_vector(3 downto 0) := "0010";
 begin
-    -- Computes next address
+    -- Computes entry in branch table
     write_value(32) <= '1';
     write_value(31 downto 0) <= next_address;
 
     -- Branch table
     branch_table: table
-        generic(
+        generic map(
             addr_size => 32,
             value_size => 33,
-            table_size => 256
+            table_size => 2**16
         )
-        port(
+        port map(
             clk => clk,
             addr => pc,
             wvalue => write_value,
