@@ -5,18 +5,21 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+-- Entity if stage
 entity if_stage is
     port (
         clk: in std_logic;
         jump_address: in std_logic_vector(31 downto 0);
         branch_address: in std_logic_vector(31 downto 0);
-        jump, branch: in std_logic;
+        fallback_address_in: in std_logic_vector(31 downto 0);
+        jump, branch, fallback: in std_logic;
         predicted_address: buffer std_logic_vector(31 downto 0);
-        fallback_address: buffer std_logic_vector(31 downto 0);
+        fallback_address_out: buffer std_logic_vector(31 downto 0);
         instruction: out std_logic_vector(31 downto 0)
     );
 end entity;
 
+-- Architecture of if stage
 architecture arch of if_stage is
     -- Read only memory entity
     component readonly_mem is
@@ -38,30 +41,44 @@ architecture arch of if_stage is
             clk: in std_logic;
             pc, next_address: in std_logic_vector(n-1 downto 0);
             branch: in std_logic;
-            predicted_address, fallback_address: out std_logic_vector(n-1 downto 0)
+            predicted_address,
+            fallback_address: out std_logic_vector(n-1 downto 0)
         );
     end component;
 
     -- Declare signals
     signal
         branch_command,
+        stall,
         delayed_clk:
     std_logic;
     signal
-        jump_or_predicted,
+        check_jump,
+        check_branch,
+        pre_stall_instruction,
         d_pc,
         q_pc:
     std_logic_vector(31 downto 0);
+
+    -- Declare constants
+    constant
+        zero
+    : std_logic_vector(31 downto 0)
+    := (others => '0');
 begin
     -- Delayed clock
     delayed_clk <= clk after 1 ns;
 
-    -- Compute next address
-    jump_or_predicted <= jump_address when jump='1' else predicted_address;
-    d_pc <= branch_address when branch='1' else jump_or_predicted;
+    -- Compute next pc
+    check_jump <= jump_address when jump='1' else predicted_address;
+    check_branch <= branch_address when branch='1' else check_jump;
+    d_pc <= fallback_address_in when fallback='1' else check_branch;
 
-    -- Branch command
+    -- Set branch command
     branch_command <= jump or branch;
+
+    -- Set stall command
+    stall <= jump or branch or fallback;
 
     -- Branch Target Buffer Predictor
     branch_target_buffer: btb_predictor
@@ -74,11 +91,11 @@ begin
             next_address => d_pc,
             branch => branch_command,
             predicted_address => predicted_address,
-            fallback_address => fallback_address
+            fallback_address => fallback_address_out
         );
 
     -- Program counter
-    q_pc <= d_pc when rising_edge(delayed_clk) else q_pc;
+    q_pc <= d_pc when delayed_clk'event and delayed_clk='1' else q_pc;
 
     -- Instruction Memory
     instruction_memory: readonly_mem
@@ -89,6 +106,9 @@ begin
         )
         port map(
             addr => q_pc,
-            data => instruction
+            data => pre_stall_instruction
         );
+
+    -- Handle stall
+    instruction <= zero when stall='1' else pre_stall_instruction;
 end architecture;

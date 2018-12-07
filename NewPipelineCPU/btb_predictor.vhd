@@ -71,7 +71,7 @@ begin
         generic map(
             addr_size => 32,
             value_size => 33,
-            table_size => 2**16
+            table_size => 256
         )
         port map(
             clk => clk,
