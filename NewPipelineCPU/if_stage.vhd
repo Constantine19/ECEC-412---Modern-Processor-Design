@@ -45,9 +45,9 @@ architecture arch of if_stage is
 
     -- Declare constants
     constant
-        zero
+        undef
     : std_logic_vector(31 downto 0)
-    := (others => '0');
+    := (others => 'X');
 begin
     -- Instruction Memory
     instruction_memory: readonly_mem
@@ -62,7 +62,7 @@ begin
         );
 
     -- Handle stall
-    d_instruction <= zero when branch='1' else pre_stall_instruction;
+    d_instruction <= undef when branch='1' else pre_stall_instruction;
 
     -- Commit values
     q_instruction <= d_instruction when clk'event and clk='1' else q_instruction;
