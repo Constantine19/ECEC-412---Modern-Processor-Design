@@ -21,11 +21,11 @@ V80OX7X<?cI>TQ7377L_cB0
 !s100 JaRE<UdD_bcnFIRem>TXH3
 Z6 OP;C;10.4a;61
 32
-Z7 !s110 1544150017
+Z7 !s110 1544154340
 !i10b 1
-Z8 !s108 1544150016.000000
-Z9 !s90 -reportprogress|300|-work|work|alu.vhd|btb_predictor.vhd|cpu.vhd|if_stage.vhd|memory.vhd|table.vhd|
-Z10 !s107 table.vhd|memory.vhd|if_stage.vhd|cpu.vhd|btb_predictor.vhd|alu.vhd|
+Z8 !s108 1544154340.000000
+Z9 !s90 -reportprogress|300|-work|work|alu.vhd|btb_predictor.vhd|cpu.vhd|if_stage.vhd|memory.vhd|pc_stage.vhd|table.vhd|
+Z10 !s107 table.vhd|pc_stage.vhd|memory.vhd|if_stage.vhd|cpu.vhd|btb_predictor.vhd|alu.vhd|
 !i113 1
 Z11 o-work work -O0
 Z12 tExplicit 1
@@ -289,8 +289,49 @@ R51
 !i113 1
 R11
 R12
+Epc_stage
+Z52 w1544154331
+R20
+R2
+R3
+R0
+Z53 8pc_stage.vhd
+Z54 Fpc_stage.vhd
+l0
+L8
+V6hUeSnb0FlO>4K`G`@`>h2
+!s100 a>T_BmUo>?XWU6mD1:`JM0
+R6
+32
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+R12
+Aarch
+R20
+R2
+R3
+DEx4 work 8 pc_stage 0 22 6hUeSnb0FlO>4K`G`@`>h2
+l36
+L19
+V^a`ManlbK8_@QPalf@jC;2
+!s100 G22RO8WEid:TTXCF9`6J33
+R6
+32
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+R12
 Eread_only_memory
-Z52 w1542677206
+Z55 w1542677206
 R20
 R2
 R3
@@ -303,9 +344,9 @@ V?mZnT;1PW]Hl2^BK?ZT2=2
 !s100 NR4gLNF?]GegZ0U:z^_C`0
 R6
 32
-Z53 !s110 1542677209
+Z56 !s110 1542677209
 !i10b 1
-Z54 !s108 1542677209.000000
+Z57 !s108 1542677209.000000
 R43
 R44
 !i113 1
@@ -322,16 +363,16 @@ V:=z<Qj[4FePWUFRN<E79H0
 !s100 @dPONdJ1aegc0jRIXfHeD0
 R6
 32
-R53
+R56
 !i10b 1
-R54
+R57
 R43
 R44
 !i113 1
 R11
 R12
 Ereadonly_mem
-Z55 w1543289178
+Z58 w1543289178
 R20
 R2
 R3
@@ -356,11 +397,11 @@ Aarch
 R20
 R2
 R3
-Z56 DEx4 work 12 readonly_mem 0 22 I]9Od?lV?N_]CBQW3G5lG3
+Z59 DEx4 work 12 readonly_mem 0 22 I]9Od?lV?N_]CBQW3G5lG3
 l33
 L27
-Z57 VFkh912dQ;PdkOdgEDgX`B3
-Z58 !s100 VFXi8XMLcKC^KHI9R:LoI1
+Z60 VFkh912dQ;PdkOdgEDgX`B3
+Z61 !s100 VFXi8XMLcKC^KHI9R:LoI1
 R6
 32
 R7
@@ -372,23 +413,23 @@ R10
 R11
 R12
 Ereg
-Z59 w1543526170
+Z62 w1543526170
 R2
 R3
 R0
-Z60 8reg.vhd
-Z61 Freg.vhd
+Z63 8reg.vhd
+Z64 Freg.vhd
 l0
 L33
 VMmiEPMX8XP?b8Lz[YOQ3F3
 !s100 zKXJn8755a5=eBZO9<EzU0
 R6
 32
-Z62 !s110 1543526182
+Z65 !s110 1543526182
 !i10b 1
-Z63 !s108 1543526182.000000
-Z64 !s90 -reportprogress|300|-work|work|alu.vhd|cpu.vhd|memory.vhd|reg.vhd|table.vhd|
-Z65 !s107 table.vhd|reg.vhd|memory.vhd|cpu.vhd|alu.vhd|
+Z66 !s108 1543526182.000000
+Z67 !s90 -reportprogress|300|-work|work|alu.vhd|cpu.vhd|memory.vhd|reg.vhd|table.vhd|
+Z68 !s107 table.vhd|reg.vhd|memory.vhd|cpu.vhd|alu.vhd|
 !i113 1
 R11
 R12
@@ -402,32 +443,32 @@ V_D^6fC1Cf5eDD1G`ghfKL1
 !s100 ShdVfinZ?2mSiQS3@Od^S3
 R6
 32
-R62
-!i10b 1
-R63
-R64
 R65
+!i10b 1
+R66
+R67
+R68
 !i113 1
 R11
 R12
 Ereg1
-R59
+R62
 R2
 R3
 R0
-R60
-R61
+R63
+R64
 l0
 L9
 VaK[hLK`<mNa8ml;QPngzH3
 !s100 A0nCoc0GM@7O`j8<C6C;?3
 R6
 32
-R62
-!i10b 1
-R63
-R64
 R65
+!i10b 1
+R66
+R67
+R68
 !i113 1
 R11
 R12
@@ -441,22 +482,22 @@ VnVFM1L66nzfX<BhIhQL=N0
 !s100 CTg<`LE4U78CmKNMOfH_70
 R6
 32
-R62
-!i10b 1
-R63
-R64
 R65
+!i10b 1
+R66
+R67
+R68
 !i113 1
 R11
 R12
 Eregister_table
-Z66 w1543524956
+Z69 w1543524956
 R20
 R2
 R3
 R0
-Z67 8table.vhd
-Z68 Ftable.vhd
+Z70 8table.vhd
+Z71 Ftable.vhd
 l0
 L71
 VV[1I3g<XIQk>3U2PJ4Q_Z0
@@ -475,11 +516,11 @@ Aarch
 R20
 R2
 R3
-Z69 DEx4 work 14 register_table 0 22 V[1I3g<XIQk>3U2PJ4Q_Z0
+Z72 DEx4 work 14 register_table 0 22 V[1I3g<XIQk>3U2PJ4Q_Z0
 l96
 L87
-Z70 VXT4e=fT_ZkN9lFAnjnEW]3
-Z71 !s100 zcU]j@4COnbECjIV5A0VB1
+Z73 VXT4e=fT_ZkN9lFAnjnEW]3
+Z74 !s100 zcU]j@4COnbECjIV5A0VB1
 R6
 32
 R7
@@ -491,24 +532,24 @@ R10
 R11
 R12
 Ero_mem
-Z72 w1542677236
+Z75 w1542677236
 R20
 R2
 R3
 R0
-Z73 8ro_mem.vhd
-Z74 Fro_mem.vhd
+Z76 8ro_mem.vhd
+Z77 Fro_mem.vhd
 l0
 L10
 VW5V_5MHRiiIj?B_:d:iF13
 !s100 z?m1;ng3THjJOj6[7R;LQ2
 R6
 32
-Z75 !s110 1542677255
+Z78 !s110 1542677255
 !i10b 1
-Z76 !s108 1542677255.000000
-Z77 !s90 -reportprogress|300|-work|work|reg.vhd|ro_mem.vhd|
-Z78 !s107 ro_mem.vhd|reg.vhd|
+Z79 !s108 1542677255.000000
+Z80 !s90 -reportprogress|300|-work|work|reg.vhd|ro_mem.vhd|
+Z81 !s107 ro_mem.vhd|reg.vhd|
 !i113 1
 R11
 R12
@@ -523,11 +564,11 @@ Vm[aN7@bjBElO]?<JMKX<81
 !s100 3O8IDDmCBeUC2jSkH8ag_0
 R6
 32
-R75
-!i10b 1
-R76
-R77
 R78
+!i10b 1
+R79
+R80
+R81
 !i113 1
 R11
 R12
@@ -573,13 +614,13 @@ R44
 R11
 R12
 Etable
-R66
+R69
 R20
 R2
 R3
 R0
-R67
-R68
+R70
+R71
 l0
 L14
 VTH4mn_?kndNHRcHNCQoFk2
@@ -598,11 +639,11 @@ Aarch
 R20
 R2
 R3
-Z79 DEx4 work 5 table 0 22 TH4mn_?kndNHRcHNCQoFk2
+Z82 DEx4 work 5 table 0 22 TH4mn_?kndNHRcHNCQoFk2
 l36
 L30
-Z80 VIYzfg2>ejPfgST6PP?OVW2
-Z81 !s100 4^l_<h9Viz<WXMkQ5Fk[?1
+Z83 VIYzfg2>ejPfgST6PP?OVW2
+Z84 !s100 4^l_<h9Viz<WXMkQ5Fk[?1
 R6
 32
 R7
@@ -614,7 +655,7 @@ R10
 R11
 R12
 Ewritable_mem
-R55
+R58
 R20
 R2
 R3
@@ -639,11 +680,11 @@ Aarch
 R20
 R2
 R3
-Z82 DEx4 work 12 writable_mem 0 22 RUeaNnH3Q;DEId?[]_M7H0
+Z85 DEx4 work 12 writable_mem 0 22 RUeaNnH3Q;DEId?[]_M7H0
 l79
 L73
-Z83 V8ef447^b>Vd2_]Dncglm?1
-Z84 !s100 >D3f5BTU9b`9z?QLg80@z0
+Z86 V8ef447^b>Vd2_]Dncglm?1
+Z87 !s100 >D3f5BTU9b`9z?QLg80@z0
 R6
 32
 R7
