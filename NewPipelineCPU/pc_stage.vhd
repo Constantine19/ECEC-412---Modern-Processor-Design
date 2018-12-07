@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 
 -- PC Stage entity
 entity pc_stage is
-    port(
+    port (
         clk: in std_logic;
         branch_address: in std_logic_vector(31 downto 0);
         branch_command: in std_logic;
