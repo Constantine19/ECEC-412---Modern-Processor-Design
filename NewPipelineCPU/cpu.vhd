@@ -34,6 +34,47 @@ architecture arch of cpu is
             fallback_address_out  : out std_logic_vector(31 downto 0)
         );
     end component if_stage;
+    component id_stage
+        port (
+            clk                   : in  std_logic;
+            branch_execute        : in  std_logic;
+
+            -- Previous stage input
+            predicted_address_in  : in  std_logic_vector(31 downto 0);
+            fallback_address_in   : in  std_logic_vector(31 downto 0);
+            instruction           : in  std_logic_vector(31 downto 0);
+
+            -- WB Data
+            WB_result             : in  std_logic_vector(31 downto 0);
+            WB_write_address      : in  std_logic_vector(4 downto 0);
+            WB_regwrite           : in  std_logic;
+
+            -- Jump
+            jump_address          : out std_logic_vector(31 downto 0);
+            jump_execute          : out std_logic;
+
+            -- Addresses
+            predicted_address_out : out std_logic_vector(31 downto 0);
+            fallback_address_out  : out std_logic_vector(31 downto 0);
+
+            -- Signals
+            ID_aluop              : out std_logic_vector(2 downto 0);
+            ID_alusrc, ID_branch,
+            ID_memwrite, ID_memread, ID_mem2reg,
+            ID_regwrite,
+            ID_stackop,
+            ID_stackpushpop       : out std_logic;
+
+            -- EX data
+            ID_read_data_1        : out std_logic_vector(31 downto 0);
+            ID_read_data_2        : out std_logic_vector(31 downto 0);
+            ID_se_immediate       : out std_logic_vector(31 downto 0);
+            ID_funct              : out std_logic_vector(5 downto 0);
+            ID_read_address_1     : out std_logic_vector(4 downto 0);
+            ID_read_address_2     : out std_logic_vector(4 downto 0);
+            ID_write_address      : out std_logic_vector(4 downto 0)
+        );
+    end component id_stage;
 
     -- Declare Signals
     signal
@@ -43,11 +84,41 @@ architecture arch of cpu is
         PC_fallback_address,
         IF_instruction,
         IF_predicted_address,
-        IF_fallback_address
+        IF_fallback_address,
+        ID_jump_address,
+        ID_predicted_address,
+        ID_fallback_address,
+        ID_se_immediate,
+        ID_read_data_1,
+        ID_read_data_2,
+        WB_result
     : std_logic_vector(31 downto 0);
     signal
+        ID_funct
+    : std_logic_vector(5 downto 0);
+    signal
+        ID_read_address_1,
+        ID_read_address_2,
+        ID_write_address,
+        WB_write_address
+    : std_logic_vector(4 downto 0);
+    signal
+        ID_aluop
+    : std_logic_vector(2 downto 0);
+    signal
         PC_branch,
-        IF_branch
+        IF_branch,
+        ID_jump_execute,
+        ID_alusrc,
+        ID_branch,
+        ID_memwrite,
+        ID_memread,
+        ID_mem2reg,
+        ID_regwrite,
+        ID_stackop,
+        ID_stackpushpop,
+        EX_branch_execute,
+        WB_regwrite
     : std_logic;
 begin
     -- PC Stage
@@ -85,6 +156,50 @@ begin
         -- Read Register
         -- Sign Extend
         -- Write Address
+    id_stage_i : id_stage
+        port map (
+            clk                   => clk,
+            branch_execute        => EX_branch_execute,
+
+            -- Previous stage input
+            predicted_address_in  => IF_predicted_address,
+            fallback_address_in   => IF_fallback_address,
+            instruction           => IF_instruction,
+
+            -- WB Data
+            WB_result             => WB_result,
+            WB_write_address      => WB_write_address,
+            WB_regwrite           => WB_regwrite,
+
+            -- Jump
+            jump_address          => ID_jump_address,
+            jump_execute          => ID_jump_execute,
+
+            -- Addresses
+            predicted_address_out => ID_predicted_address,
+            fallback_address_out  => ID_fallback_address,
+
+            -- Signals
+            ID_aluop              => ID_aluop,
+            ID_alusrc             => ID_alusrc,
+            ID_branch             => ID_branch,
+            ID_memwrite           => ID_memwrite,
+            ID_memread            => ID_memread,
+            ID_mem2reg            => ID_mem2reg,
+            ID_regwrite           => ID_regwrite,
+            ID_stackop            => ID_stackop,
+            ID_stackpushpop       => ID_stackpushpop,
+
+            -- EX data
+            ID_read_data_1        => ID_read_data_1,
+            ID_read_data_2        => ID_read_data_2,
+            ID_read_address_1     => ID_read_address_1,
+            ID_read_address_2     => ID_read_address_2,
+            ID_se_immediate       => ID_se_immediate,
+            ID_funct              => ID_funct,
+            ID_write_address      => ID_write_address
+        );
+
 
     -- EX STAGE
         -- Compute Operands

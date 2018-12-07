@@ -15,4 +15,5 @@ architecture arch of ex_stage is
 begin
     -- ALU
     -- Branch
+    -- Forwarding
 end architecture;
