@@ -11,7 +11,7 @@ entity pc_stage is
         clk: in std_logic;
         branch_address: in std_logic_vector(31 downto 0);
         branch_command: in std_logic;
-        pc: buffer std_logic_vector(31 downto 0);
+        pc: out std_logic_vector(31 downto 0);
         predicted_address: buffer std_logic_vector(31 downto 0);
         fallback_address: out std_logic_vector(31 downto 0)
     );
@@ -34,7 +34,7 @@ architecture arch of pc_stage is
 
     -- Declare signals
     signal delayed_clk : std_logic;
-    signal d_pc : std_logic_vector(31 downto 0);
+    signal d_pc, q_pc : std_logic_vector(31 downto 0) := (others => '0');
 begin
     -- Delayed clk
     delayed_clk <= clk after 1 ns;
@@ -49,13 +49,16 @@ begin
         )
         port map(
             clk => clk,
-            pc => pc,
+            pc => q_pc,
             next_address => d_pc,
             branch => branch_command,
             predicted_address => predicted_address,
             fallback_address => fallback_address
         );
 
-    -- Program Counter
-    pc <= d_pc when delayed_clk'event and delayed_clk='1' else pc;
+    -- Commit Program Counter
+    q_pc <= d_pc when delayed_clk'event and delayed_clk='1' else q_pc;
+
+    -- Output program counter
+    pc <= q_pc;
 end architecture;

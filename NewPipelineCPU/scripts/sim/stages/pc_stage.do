@@ -14,6 +14,7 @@ add wave -group "Inputs" -color "Red" -label "Branch Address" "sim:/pc_stage/bra
 add wave -group "Inputs" -color "Red" -label "Branch Command" "sim:/pc_stage/branch_command"
 add wave -group "Intermediaries" -color "Orange" -label "Delayed Clock" "sim:/pc_stage/delayed_clk"
 add wave -group "Intermediaries" -color "Orange" -label "PC - D" "sim:/pc_stage/d_pc"
+add wave -group "Intermediaries" -color "Orange" -label "PC - Q" "sim:/pc_stage/q_pc"
 add wave -group "Outputs" -color "Cyan" -label "PC" "sim:/pc_stage/pc"
 add wave -group "Outputs" -color "Cyan" -label "Predicted Address" "sim:/pc_stage/predicted_address"
 add wave -group "Outputs" -color "Cyan" -label "Fallback Address" "sim:/pc_stage/fallback_address"
@@ -24,9 +25,6 @@ mem load -filltype value -fillradix hexadecimal -filldata {0} \
 
 # Initialize clock
 force -freeze -repeat 100ns "sim:/pc_stage/clk" 0 0ns, 1 50ns
-
-# Initialize program counter
-force -freeze -cancel 10ns "sim:/pc_stage/pc" 0 0ns
 
 # Test Incrementing Program Counter
 force -freeze "sim:/pc_stage/branch_command" 0 0ns
