@@ -15,10 +15,12 @@ add wave -group "PC Stage" -color "White" -label "PC" "sim:/cpu/PC_pc"
 add wave -group "PC Stage" -color "White" -label "Predicted Address" "sim:/cpu/PC_predicted_address"
 add wave -group "PC Stage" -color "White" -label "Fallback Address" "sim:/cpu/PC_fallback_address"
 # IF STAGE
+add wave -group "IF Stage" -color "Red" -label "PC" "sim:/cpu/IF_pc"
 add wave -group "IF Stage" -color "Red" -label "Instruction" "sim:/cpu/IF_instruction"
 add wave -group "IF Stage" -color "Red" -label "Predicted Address" "sim:/cpu/IF_predicted_address"
 add wave -group "IF Stage" -color "Red" -label "Fallback Address" "sim:/cpu/IF_fallback_address"
 # ID STAGE
+add wave -group "ID Stage" -color "Orange" -label "PC" "sim:/cpu/ID_pc"
 add wave -group "ID Stage" -color "Orange" -label "Jump Address" "sim:/cpu/ID_jump_address"
 add wave -group "ID Stage" -color "Orange" -label "Jump Execute" "sim:/cpu/ID_jump_execute"
 add wave -group "ID Stage" -color "Orange" -label "Predicted Address" "sim:/cpu/ID_predicted_address"
@@ -63,6 +65,28 @@ mem load -filltype value -fillradix hexadecimal -filldata {
     08 00 00 10
     AC 0C 00 10
 } -startaddress 0 -endaddress 35 "sim:/cpu/if_stage_i/instruction_memory/memory"
+
+# Initialize registers
+mem load -filltype value -fillradix hexadecimal -filldata {0} \
+-startaddress 0 -endaddress 0 "sim:/cpu/id_stage_i/register_table_i/table"
+mem load -filltype value -fillradix hexadecimal -filldata {
+    8C080008
+    8C09000C
+    2010012A
+    01095020
+    210B000D
+    0170600A
+    100C0020
+    08000010
+    100C0020
+    08000010
+    AC0C0010
+    0170600A
+    100C0020
+    08000010
+    AC0C0010
+    AC0C0010
+} -startaddress 4 -endaddress 20 "sim:/cpu/id_stage_i/register_table_i/table"
 
 # Start clock
 force -freeze -repeat 100ns "sim:/cpu/clk" 0 0ns, 1 50ns

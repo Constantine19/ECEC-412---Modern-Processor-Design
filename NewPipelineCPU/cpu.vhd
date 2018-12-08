@@ -25,10 +25,11 @@ architecture arch of cpu is
     component if_stage
         port (
             clk                   : in  std_logic;
-            pc                    : in  std_logic_vector(31 downto 0);
+            pc_in                 : in  std_logic_vector(31 downto 0);
             predicted_address_in  : in  std_logic_vector(31 downto 0);
             fallback_address_in   : in  std_logic_vector(31 downto 0);
             branch                : in  std_logic;
+            pc_out                : out std_logic_vector(31 downto 0);
             instruction           : out std_logic_vector(31 downto 0);
             predicted_address_out : out std_logic_vector(31 downto 0);
             fallback_address_out  : out std_logic_vector(31 downto 0)
@@ -40,6 +41,7 @@ architecture arch of cpu is
             branch_execute        : in  std_logic;
 
             -- Previous stage input
+            pc_in                 : in  std_logic_vector(31 downto 0);
             predicted_address_in  : in  std_logic_vector(31 downto 0);
             fallback_address_in   : in  std_logic_vector(31 downto 0);
             instruction           : in  std_logic_vector(31 downto 0);
@@ -54,6 +56,7 @@ architecture arch of cpu is
             jump_execute          : out std_logic;
 
             -- Addresses
+            pc_out                : out std_logic_vector(31 downto 0);
             predicted_address_out : out std_logic_vector(31 downto 0);
             fallback_address_out  : out std_logic_vector(31 downto 0);
 
@@ -82,9 +85,11 @@ architecture arch of cpu is
         PC_pc,
         PC_predicted_address,
         PC_fallback_address,
+        IF_pc,
         IF_instruction,
         IF_predicted_address,
         IF_fallback_address,
+        ID_pc,
         ID_jump_address,
         ID_predicted_address,
         ID_fallback_address,
@@ -140,10 +145,11 @@ begin
     if_stage_i : if_stage
         port map (
             clk                   => clk,
-            pc                    => PC_pc,
+            pc_in                 => PC_pc,
             predicted_address_in  => PC_predicted_address,
             fallback_address_in   => PC_fallback_address,
             branch                => IF_branch,
+            pc_out                => IF_pc,
             instruction           => IF_instruction,
             predicted_address_out => IF_predicted_address,
             fallback_address_out  => IF_fallback_address
@@ -162,6 +168,7 @@ begin
             branch_execute        => EX_branch_execute,
 
             -- Previous stage input
+            pc_in                 => IF_pc,
             predicted_address_in  => IF_predicted_address,
             fallback_address_in   => IF_fallback_address,
             instruction           => IF_instruction,
@@ -176,6 +183,7 @@ begin
             jump_execute          => ID_jump_execute,
 
             -- Addresses
+            pc_out                => ID_pc,
             predicted_address_out => ID_predicted_address,
             fallback_address_out  => ID_fallback_address,
 

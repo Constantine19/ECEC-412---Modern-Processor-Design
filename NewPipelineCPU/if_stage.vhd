@@ -9,10 +9,11 @@ use ieee.numeric_std.all;
 entity if_stage is
     port (
         clk: in std_logic;
-        pc: in std_logic_vector(31 downto 0);
+        pc_in: in std_logic_vector(31 downto 0);
         predicted_address_in: in std_logic_vector(31 downto 0);
         fallback_address_in: in std_logic_vector(31 downto 0);
         branch: in std_logic;
+        pc_out: out std_logic_vector(31 downto 0);
         instruction: out std_logic_vector(31 downto 0);
         predicted_address_out: out std_logic_vector(31 downto 0);
         fallback_address_out: out std_logic_vector(31 downto 0)
@@ -39,6 +40,7 @@ architecture arch of if_stage is
         pre_stall_instruction,
         d_instruction,
         q_instruction,
+        q_pc,
         q_predicted_address,
         q_fallback_address
     : std_logic_vector(31 downto 0);
@@ -57,7 +59,7 @@ begin
             data_size => 256
         )
         port map(
-            addr => pc,
+            addr => pc_in,
             data => pre_stall_instruction
         );
 
@@ -65,11 +67,13 @@ begin
     d_instruction <= undef when branch='1' else pre_stall_instruction;
 
     -- Commit values
+    q_pc <= pc_in when clk'event and clk='1' else q_pc;
     q_instruction <= d_instruction when clk'event and clk='1' else q_instruction;
     q_predicted_address <= predicted_address_in when clk'event and clk='1' else q_predicted_address;
     q_fallback_address <= fallback_address_in when clk'event and clk='1' else q_fallback_address;
 
     -- Output
+    pc_out <= q_pc;
     instruction <= q_instruction;
     predicted_address_out <= q_predicted_address;
     fallback_address_out <= q_fallback_address;
