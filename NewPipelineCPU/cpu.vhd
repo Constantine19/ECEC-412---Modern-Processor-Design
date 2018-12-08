@@ -78,6 +78,43 @@ architecture arch of cpu is
             ID_write_address      : out std_logic_vector(4 downto 0)
         );
     end component id_stage;
+    component ex_stage
+        port (
+            clk               : in  std_logic;
+
+            -- Branch handling
+            pc                : in  std_logic_vector(31 downto 0);
+            predicted_address : in  std_logic_vector(31 downto 0);
+            fallback_address  : in  std_logic_vector(31 downto 0);
+
+            -- Signals
+            ID_aluop          : in  std_logic_vector(2 downto 0);
+            ID_alusrc, ID_branch,
+            ID_memwrite, ID_memread, ID_mem2reg,
+            ID_regwrite,
+            ID_stackop,
+            ID_stackpushpop   : in  std_logic;
+
+            -- Data
+            ID_read_data_1,
+            ID_read_data_2    : in  std_logic_vector(31 downto 0);
+            ID_read_address_1,
+            ID_read_address_2 : in  std_logic_vector(4 downto 0);
+            ID_se_immediate   : in  std_logic_vector(31 downto 0);
+            ID_funct          : in  std_logic_vector(5 downto 0);
+            ID_write_address  : in  std_logic_vector(4 downto 0);
+
+            -- Output signals
+            EX_memwrite,
+            EX_memread,
+            EX_mem2reg,
+            EX_regwrite       : in std_logic;
+            EX_alu_result     : out std_logic_vector(31 downto 0);
+            EX_write_data     : out std_logic_vector(31 downto 0);
+            EX_write_address  : out std_logic_vector(4 downto 0)
+        );
+    end component ex_stage;
+
 
     -- Declare Signals
     signal
@@ -96,6 +133,7 @@ architecture arch of cpu is
         ID_se_immediate,
         ID_read_data_1,
         ID_read_data_2,
+        EX_alu_result,
         WB_result
     : std_logic_vector(31 downto 0);
     signal
@@ -213,10 +251,49 @@ begin
         -- Compute Operands
             -- SignExtend/Register2/Stack Push/Stack Pop
             -- Forwarding Units
-            -- Stack Op
-            -- Stack Push Pop
         -- ALU Operation
         -- Branch
+    ex_stage_i : ex_stage
+        port map (
+            clk               => clk,
+
+            -- Branch Handling
+            pc                => ID_pc,
+            predicted_address => ID_predicted_address,
+            fallback_address  => ID_fallback_address,
+
+            -- Signals
+            ID_aluop          => ID_aluop,
+            ID_alusrc         => ID_alusrc,
+            ID_branch         => ID_branch,
+            ID_memwrite       => ID_memwrite,
+            ID_memread        => ID_memread,
+            ID_mem2reg        => ID_mem2reg,
+            ID_regwrite       => ID_regwrite,
+            ID_stackop        => ID_stackop,
+            ID_stackpushpop   => ID_stackpushpop,
+
+            -- Data
+            ID_read_data_2    => ID_read_data_1,
+            ID_read_data_2    => ID_read_data_2,
+            ID_read_address_2 => ID_read_address_1,
+            ID_read_address_2 => ID_read_address_2,
+            ID_se_immediate   => ID_se_immediate,
+            ID_funct          => ID_funct,
+            ID_write_address  => ID_write_address,
+
+            -- Output Signals
+            EX_memwrite       => EX_memwrite,
+            EX_memread        => EX_memread,
+            EX_mem2reg        => EX_mem2reg,
+            EX_regwrite       => EX_regwrite,
+
+            -- Output Data
+            EX_alu_result     => EX_alu_result,
+            EX_write_data     => EX_write_data,
+            EX_write_address  => EX_write_address
+        );
+
 
     -- MEM STAGE
         -- Handle Memory

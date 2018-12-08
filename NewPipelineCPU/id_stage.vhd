@@ -91,6 +91,8 @@ architecture arch of id_stage is
     -- Declare signals
     signal
         q_pc,
+        q_predicted_address,
+        q_fallback_address,
         d_read_data_1, q_read_data_1,
         d_read_data_2, q_read_data_2
     : std_logic_vector(31 downto 0);
@@ -189,6 +191,8 @@ begin
 
     -- Commit
     q_pc <= pc_in when clk'event and clk='1' else q_pc;
+    q_predicted_address <= predicted_address_in when clk'event and clk='1' else q_predicted_address;
+    q_fallback_address <= fallback_address_in when clk'event and clk='1' else q_fallback_address;
     q_aluop <= d_aluop when clk'event and clk='1' else q_aluop;
     q_alusrc <= d_alusrc when clk'event and clk='1' else q_alusrc;
     q_branch <= d_branch when clk'event and clk='1' else q_branch;
@@ -207,6 +211,8 @@ begin
 
     -- Output
     pc_out <= q_pc;
+    predicted_address_out <= q_predicted_address;
+    fallback_address_out <= q_fallback_address;
     ID_aluop <= q_aluop;
     ID_alusrc <= q_alusrc;
     ID_branch <= q_branch;
