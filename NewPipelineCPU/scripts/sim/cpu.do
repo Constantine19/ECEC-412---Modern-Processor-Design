@@ -51,8 +51,8 @@ mem load -filltype value -filldata {0} "sim:/cpu/if_stage_i/instruction_memory/m
     # add $t2 $t0 $t1
     # addi $t3 $t0 13
     # slt $t4 $t3 $s0
-    # beq $t4 $zero 32
-    # j 16
+    # beq $t4 $zero 8
+    # j 4
     # sw $t4 $zero 16
 mem load -filltype value -fillradix hexadecimal -filldata {
     8C 08 00 08
@@ -61,8 +61,8 @@ mem load -filltype value -fillradix hexadecimal -filldata {
     01 09 50 20
     21 0B 00 0D
     01 70 60 0A
-    10 0C 00 20
-    08 00 00 10
+    10 0C 00 08
+    08 00 00 04
     AC 0C 00 10
 } -startaddress 0 -endaddress 35 "sim:/cpu/if_stage_i/instruction_memory/memory"
 

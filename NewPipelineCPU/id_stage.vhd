@@ -77,6 +77,16 @@ architecture arch of id_stage is
             rvalue1, rvalue2      : out std_logic_vector(value_size-1 downto 0)
         );
     end component register_table;
+    component handle_jump
+        port (
+            predicted_address : in  std_logic_vector(31 downto 0);
+            pc                : in  std_logic_vector(31 downto 0);
+            jump_code         : in  std_logic_vector(25 downto 0);
+            jump_address      : out std_logic_vector(31 downto 0);
+            jump              : in  std_logic;
+            jump_execute      : out std_logic
+        );
+    end component handle_jump;
 
     -- Declare signals
     signal
@@ -144,6 +154,16 @@ begin
         );
 
     -- Jump
+    handle_jump_i : handle_jump
+        port map (
+            predicted_address => predicted_address_in,
+            pc                => pc_in,
+            jump_code         => instruction(25 downto 0),
+            jump              => jump,
+            jump_address      => jump_address,
+            jump_execute      => jump_execute
+        );
+
 
     -- Read Registers
     register_table_i : register_table
