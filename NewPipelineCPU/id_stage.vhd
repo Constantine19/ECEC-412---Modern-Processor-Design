@@ -31,7 +31,7 @@ entity id_stage is
         fallback_address_out: out std_logic_vector(31 downto 0);
 
         -- Signals
-        ID_aluop: out std_logic_vector(2 downto 0);
+        ID_aluop : out std_logic_vector(2 downto 0);
         ID_alusrc, ID_branch,
         ID_memwrite, ID_memread, ID_mem2reg,
         ID_regwrite,
@@ -43,9 +43,9 @@ entity id_stage is
         ID_read_data_2 : out std_logic_vector(31 downto 0);
         ID_read_address_1 : out std_logic_vector(4 downto 0);
         ID_read_address_2 : out std_logic_vector(4 downto 0);
-        ID_se_immediate: out std_logic_vector(31 downto 0);
-        ID_funct: out std_logic_vector(5 downto 0);
-        ID_write_address: out std_logic_vector(4 downto 0)
+        ID_se_immediate : out std_logic_vector(31 downto 0);
+        ID_funct : out std_logic_vector(5 downto 0);
+        ID_write_address : out std_logic_vector(4 downto 0)
     );
 end entity;
 
