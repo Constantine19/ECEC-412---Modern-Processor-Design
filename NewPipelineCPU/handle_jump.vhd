@@ -2,8 +2,10 @@
 -- Author:  Anshul Kharbanda
 -- Created: 11 - 29 - 2018
 library ieee;
+library work;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.helper.all;
 
 -- Handle jump entity
 entity handle_jump is
@@ -20,14 +22,6 @@ end entity;
 -- Handle jump architecture
 architecture arch of handle_jump is
     signal full_jump_address: std_logic_vector(31 downto 0);
-
-    function not_equal(a,b: std_logic_vector) return std_logic is
-    begin
-        if a = b then return '0';
-        else return '1';
-        end if;
-    end not_equal;
-
 begin
     -- Create jump address
     full_jump_address <= pc(31 downto 28) & jump_code & "00";
