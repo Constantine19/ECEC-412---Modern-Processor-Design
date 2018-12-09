@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 
 entity ex_stage is
     port (
-        clk: in std_logic,
+        clk: in std_logic;
 
         -- Branch handling
         pc: in std_logic_vector(31 downto 0);
@@ -26,7 +26,7 @@ entity ex_stage is
         ID_read_address_1, ID_read_address_2: in std_logic_vector(4 downto 0);
         ID_se_immediate: in std_logic_vector(31 downto 0);
         ID_funct: in std_logic_vector(5 downto 0);
-        ID_write_address: in std_logic_vector(4 std_logic_vector)
+        ID_write_address: in std_logic_vector(4 downto 0);
 
         -- Output signals
         EX_memwrite, EX_memread, EX_mem2reg,
@@ -44,7 +44,7 @@ begin
     -- Compute Operands
         -- SignExtend/Register2/Stack Push/Stack Pop
         -- Forwarding Units
-        
+
     -- ALU
         -- ALU Src
 

@@ -134,6 +134,7 @@ architecture arch of cpu is
         ID_read_data_1,
         ID_read_data_2,
         EX_alu_result,
+        EX_write_data,
         WB_result
     : std_logic_vector(31 downto 0);
     signal
@@ -143,6 +144,7 @@ architecture arch of cpu is
         ID_read_address_1,
         ID_read_address_2,
         ID_write_address,
+        EX_write_address,
         WB_write_address
     : std_logic_vector(4 downto 0);
     signal
@@ -161,6 +163,10 @@ architecture arch of cpu is
         ID_stackop,
         ID_stackpushpop,
         EX_branch_execute,
+        EX_memwrite,
+        EX_memread,
+        EX_mem2reg,
+        EX_regwrite,
         WB_regwrite
     : std_logic;
 begin
@@ -274,9 +280,9 @@ begin
             ID_stackpushpop   => ID_stackpushpop,
 
             -- Data
-            ID_read_data_2    => ID_read_data_1,
+            ID_read_data_1    => ID_read_data_1,
             ID_read_data_2    => ID_read_data_2,
-            ID_read_address_2 => ID_read_address_1,
+            ID_read_address_1 => ID_read_address_1,
             ID_read_address_2 => ID_read_address_2,
             ID_se_immediate   => ID_se_immediate,
             ID_funct          => ID_funct,
