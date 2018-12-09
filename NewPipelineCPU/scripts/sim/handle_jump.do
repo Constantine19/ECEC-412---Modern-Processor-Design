@@ -14,7 +14,6 @@ add wave -group "Inputs" -color "Red" -label "PC" "sim:/handle_jump/pc"
 add wave -group "Inputs" -color "Red" -label "Predicted Address" "sim:/handle_jump/predicted_address"
 add wave -group "Inputs" -color "Red" -label "Jump" "sim:/handle_jump/jump"
 add wave -group "Intermediaries" -color "Green" -label "Full Jump Address" "sim:/handle_jump/full_jump_address"
-add wave -group "Intermediaries" -color "Green" -label "Not Equal" "sim:/handle_jump/not_equal"
 add wave -group "Outputs" -color "Cyan" -label "Jump Address" "sim:/handle_jump/jump_address"
 add wave -group "Outputs" -color "Cyan" -label "Jump Execute" "sim:/handle_jump/jump_execute"
 

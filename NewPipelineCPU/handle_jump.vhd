@@ -20,15 +20,19 @@ end entity;
 -- Handle jump architecture
 architecture arch of handle_jump is
     signal full_jump_address: std_logic_vector(31 downto 0);
-    signal not_equal: std_logic;
+
+    function not_equal(a,b: std_logic_vector) return std_logic is
+    begin
+        if a = b then return '0';
+        else return '1';
+        end if;
+    end not_equal;
+
 begin
     -- Create jump address
     full_jump_address <= pc(31 downto 28) & jump_code & "00";
     jump_address <= full_jump_address;
 
-    -- Calculate not equal
-    not_equal <= '0' when full_jump_address = predicted_address else '1';
-
     -- Execute jump if jump and full_jump_address is not equal to predicted_address
-    jump_execute <= jump and not_equal;
+    jump_execute <= jump and not_equal(full_jump_address, predicted_address);
 end architecture;
