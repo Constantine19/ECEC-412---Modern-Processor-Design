@@ -38,7 +38,7 @@ architecture arch of cpu is
     component id_stage
         port (
             clk                   : in  std_logic;
-            branch_execute        : in  std_logic;
+            id_stall              : in  std_logic;
 
             -- Previous stage input
             pc_in                 : in  std_logic_vector(31 downto 0);
@@ -205,7 +205,7 @@ begin
     id_stage_i : id_stage
         port map (
             clk                   => clk,
-            branch_execute        => EX_branch_execute,
+            id_stall              => EX_branch_execute,
 
             -- Previous stage input
             pc_in                 => IF_pc,

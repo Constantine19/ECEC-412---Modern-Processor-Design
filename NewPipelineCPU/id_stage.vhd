@@ -8,7 +8,7 @@ use ieee.numeric_std.all;
 entity id_stage is
     port (
         clk: in std_logic;
-        branch_execute: in std_logic;
+        id_stall: in std_logic;
 
         -- Previous stage input
         pc_in: in std_logic_vector(31 downto 0);
@@ -126,7 +126,7 @@ architecture arch of id_stage is
     constant ffff : std_logic_vector(15 downto 0) := (others => '1');
 begin
     -- Get opcode
-    opcode <= undef when branch_execute='1' else instruction(31 downto 26);
+    opcode <= undef when id_stall='1' else instruction(31 downto 26);
 
     -- Compute Read Addresses
     d_read_address_1 <= instruction(25 downto 21);
