@@ -11,7 +11,7 @@ entity control is
         aluop: out std_logic_vector(2 downto 0);
         regsrc, jump,
         alusrc, branch,
-        memwrite, memread, mem2reg,
+        memwrite, mem2reg,
         regwrite,
         stackop,
         stackpushpop : out std_logic
@@ -30,7 +30,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '0'; -- No Memory operations
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '1'; -- Writing reguster
                 stackop <= '0'; -- No stack operations
@@ -42,7 +41,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '0'; -- No Memory operations
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '1'; -- Writing reguster
                 stackop <= '0'; -- No stack operations
@@ -54,7 +52,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '0'; -- Read memory
-                memread <= '1';
                 mem2reg <= '1';
                 regwrite <= '1'; -- Writing reguster
                 stackop <= '0'; -- No stack operations
@@ -66,7 +63,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '1'; -- Writing memory
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '0'; -- No writing reguster
                 stackop <= '0'; -- No stack operations
@@ -78,7 +74,6 @@ begin
                 branch <= '1'; -- Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '0'; -- No Writing memory
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '0'; -- No writing reguster
                 stackop <= '0'; -- No stack operations
@@ -90,7 +85,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '1'; -- Jump
                 memwrite <= '0'; -- No Writing memory
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '0'; -- No writing reguster
                 stackop <= '0'; -- No stack operations
@@ -102,7 +96,6 @@ begin
                 branch <= 'X'; -- No Branch
                 jump <= '0'; -- No Jump
                 memwrite <= '0'; -- Writing memory
-                memread <= '0';
                 mem2reg <= '0';
                 regwrite <= '0'; -- No writing reguster
                 stackop <= '0'; -- No stack operations

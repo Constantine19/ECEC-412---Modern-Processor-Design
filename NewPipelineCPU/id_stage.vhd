@@ -33,7 +33,7 @@ entity id_stage is
         -- Signals
         ID_aluop : out std_logic_vector(2 downto 0);
         ID_alusrc, ID_branch,
-        ID_memwrite, ID_memread, ID_mem2reg,
+        ID_memwrite, ID_mem2reg,
         ID_regwrite,
         ID_stackop,
         ID_stackpushpop : out std_logic;
@@ -57,7 +57,7 @@ architecture arch of id_stage is
             aluop : out std_logic_vector(2 downto 0);
             regsrc, jump,
             alusrc, branch,
-            memwrite, memread, mem2reg,
+            memwrite, mem2reg,
             regwrite,
             stackop,
             stackpushpop : out std_logic
@@ -114,7 +114,6 @@ architecture arch of id_stage is
         d_alusrc, q_alusrc,
         d_branch, q_branch,
         d_memwrite, q_memwrite,
-        d_memread, q_memread,
         d_mem2reg, q_mem2reg,
         d_regwrite, q_regwrite,
         d_stackop, q_stackop,
@@ -151,7 +150,6 @@ begin
             alusrc       => d_alusrc,
             branch       => d_branch,
             memwrite     => d_memwrite,
-            memread      => d_memread,
             mem2reg      => d_mem2reg,
             regwrite     => d_regwrite,
             stackop      => d_stackop,
@@ -201,7 +199,6 @@ begin
     q_alusrc <= d_alusrc when clk'event and clk='1' else q_alusrc;
     q_branch <= d_branch when clk'event and clk='1' else q_branch;
     q_memwrite <= d_memwrite when clk'event and clk='1' else q_memwrite;
-    q_memread <= d_memread when clk'event and clk='1' else q_memread;
     q_mem2reg <= d_mem2reg when clk'event and clk='1' else q_mem2reg;
     q_regwrite <= d_regwrite when clk'event and clk='1' else q_regwrite;
     q_stackop <= d_stackop when clk'event and clk='1' else q_stackop;
@@ -222,7 +219,6 @@ begin
     ID_alusrc <= q_alusrc;
     ID_branch <= q_branch;
     ID_memwrite <= q_memwrite;
-    ID_memread <= q_memread;
     ID_mem2reg <= q_mem2reg;
     ID_regwrite <= q_regwrite;
     ID_stackop <= q_stackop;

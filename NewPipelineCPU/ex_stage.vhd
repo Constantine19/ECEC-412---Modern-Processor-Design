@@ -17,7 +17,7 @@ entity ex_stage is
         -- Signals
         ID_aluop: in std_logic_vector(2 downto 0);
         ID_alusrc, ID_branch,
-        ID_memwrite, ID_memread, ID_mem2reg,
+        ID_memwrite, ID_mem2reg,
         ID_regwrite,
         ID_stackop, ID_stackpushpop: in std_logic;
 
@@ -29,7 +29,7 @@ entity ex_stage is
         ID_write_address: in std_logic_vector(4 downto 0);
 
         -- Output signals
-        EX_memwrite, EX_memread, EX_mem2reg,
+        EX_memwrite, EX_mem2reg,
         EX_regwrite: in std_logic;
 
         -- Output data

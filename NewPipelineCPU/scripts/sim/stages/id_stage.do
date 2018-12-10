@@ -26,7 +26,6 @@ add wave -group "Branch Outputs" -color "Yellow" -label "Jump Execute" "sim:/id_
 add wave -group "ID Signals" -color "Green" -radix binary -label "ID AluOp" "sim:/id_stage/ID_aluop"
 add wave -group "ID Signals" -color "Green" -label "ID AluSrc" "sim:/id_stage/ID_alusrc"
 add wave -group "ID Signals" -color "Green" -label "ID Branch" "sim:/id_stage/ID_branch"
-add wave -group "ID Signals" -color "Green" -label "ID MemRead" "sim:/id_stage/ID_memread"
 add wave -group "ID Signals" -color "Green" -label "ID Mem2Reg" "sim:/id_stage/ID_mem2reg"
 add wave -group "ID Signals" -color "Green" -label "ID RegWrite" "sim:/id_stage/ID_regwrite"
 add wave -group "ID Signals" -color "Green" -label "ID StackOp" "sim:/id_stage/ID_stackop"

@@ -63,7 +63,7 @@ architecture arch of cpu is
             -- Signals
             ID_aluop              : out std_logic_vector(2 downto 0);
             ID_alusrc, ID_branch,
-            ID_memwrite, ID_memread, ID_mem2reg,
+            ID_memwrite, ID_mem2reg,
             ID_regwrite,
             ID_stackop,
             ID_stackpushpop       : out std_logic;
@@ -90,7 +90,7 @@ architecture arch of cpu is
             -- Signals
             ID_aluop          : in  std_logic_vector(2 downto 0);
             ID_alusrc, ID_branch,
-            ID_memwrite, ID_memread, ID_mem2reg,
+            ID_memwrite, ID_mem2reg,
             ID_regwrite,
             ID_stackop,
             ID_stackpushpop   : in  std_logic;
@@ -105,9 +105,7 @@ architecture arch of cpu is
             ID_write_address  : in  std_logic_vector(4 downto 0);
 
             -- Output signals
-            EX_memwrite,
-            EX_memread,
-            EX_mem2reg,
+            EX_memwrite, EX_mem2reg,
             EX_regwrite       : in std_logic;
             EX_alu_result     : out std_logic_vector(31 downto 0);
             EX_write_data     : out std_logic_vector(31 downto 0);
@@ -157,14 +155,12 @@ architecture arch of cpu is
         ID_alusrc,
         ID_branch,
         ID_memwrite,
-        ID_memread,
         ID_mem2reg,
         ID_regwrite,
         ID_stackop,
         ID_stackpushpop,
         EX_branch_execute,
         EX_memwrite,
-        EX_memread,
         EX_mem2reg,
         EX_regwrite,
         WB_regwrite
@@ -236,7 +232,6 @@ begin
             ID_alusrc             => ID_alusrc,
             ID_branch             => ID_branch,
             ID_memwrite           => ID_memwrite,
-            ID_memread            => ID_memread,
             ID_mem2reg            => ID_mem2reg,
             ID_regwrite           => ID_regwrite,
             ID_stackop            => ID_stackop,
@@ -273,7 +268,6 @@ begin
             ID_alusrc         => ID_alusrc,
             ID_branch         => ID_branch,
             ID_memwrite       => ID_memwrite,
-            ID_memread        => ID_memread,
             ID_mem2reg        => ID_mem2reg,
             ID_regwrite       => ID_regwrite,
             ID_stackop        => ID_stackop,
@@ -290,7 +284,6 @@ begin
 
             -- Output Signals
             EX_memwrite       => EX_memwrite,
-            EX_memread        => EX_memread,
             EX_mem2reg        => EX_mem2reg,
             EX_regwrite       => EX_regwrite,
 
