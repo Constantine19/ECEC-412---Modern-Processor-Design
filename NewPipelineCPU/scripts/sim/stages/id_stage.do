@@ -11,7 +11,6 @@ view wave
 # Add Waves
 add wave -group "CPU Clock" -color "Grey60" -label "Clock" "sim:/id_stage/clk"
 add wave -group "Branch Inputs" -color "White" -label "Branch Execute" "sim:/id_stage/branch_execute"
-add wave -group "Memory Data" -color "Magenta" -label "Register Table" "sim:/id_stage/register_table_i/table"
 add wave -group "IF Inputs" -color "Red" -label "PC" "sim:/id_stage/pc_in"
 add wave -group "IF Inputs" -color "Red" -label "Predicted Address" "sim:/id_stage/predicted_address_in"
 add wave -group "IF Inputs" -color "Red" -label "Fallback Address" "sim:/id_stage/fallback_address_in"
@@ -39,6 +38,7 @@ add wave -group "ID Data" -color "Cyan" -label "ID Read Address 2" "sim:/id_stag
 add wave -group "ID Data" -color "Cyan" -label "ID SE Immediate" "sim:/id_stage/ID_se_immediate"
 add wave -group "ID Data" -color "Cyan" -label "ID Funct" "sim:/id_stage/ID_funct"
 add wave -group "ID Data" -color "Cyan" -label "ID Write Address" "sim:/id_stage/ID_write_address"
+add wave -group "Memory" -color "Magenta" -label "Register Table" "sim:/id_stage/register_table_i/table"
 
 # Set clock
 force -freeze -repeat 100 "sim:/id_stage/clk" 0 0, 1 50
@@ -60,6 +60,7 @@ mem load -filltype value -fillradix hexadecimal -filldata {
 # PC Out Should Equal PC In
 set time 0
 # -----------------------------------------------------------------------------
+force -freeze "sim:/id_stage/WB_regwrite" 0 $time
 force -freeze "sim:/id_stage/branch_execute" 0 $time
 force -freeze "sim:/id_stage/pc_in" 32'hA1B2C3D4 $time
 
@@ -223,18 +224,25 @@ force -freeze "sim:/id_stage/instruction" 32'h0000DABC $time
 # Funct should be equal to bits 5-0 of instruction
 set time [expr $time + 100]
 # -----------------------------------------------------------------------------
-force -freeze "sim:/id_stage/instruction" 32'h0000001
+force -freeze "sim:/id_stage/instruction" 32'h0000001A $time
 
 # Write Address should be equal to bits 15-11 when opcode is ALU
 set time [expr $time + 100]
 # -----------------------------------------------------------------------------
-force -freeze "sim:/id_stage/instruction" 32'h000A5800
+force -freeze "sim:/id_stage/instruction" 32'h000A5800 $time
 
 # Write Address should be equal to bits 20-16 when opcode is
 # ADDI, LW, SW, or BEQ
 set time [expr $time + 100]
 # -----------------------------------------------------------------------------
-force -freeze "sim:/id_stage/instruction" 32'h200A5800
+force -freeze "sim:/id_stage/instruction" 32'h200A5800 $time
+
+# When WB_regwrite is 1, register at write address should be write data
+set time [expr $time + 100]
+# -----------------------------------------------------------------------------
+force -freeze "sim:/id_stage/WB_write_address" 5'h15 $time
+force -freeze "sim:/id_stage/WB_result" 32'h57AB33CD $time
+force -freeze "sim:/id_stage/WB_regwrite" 1 $time
 
 # Run
 set time [expr $time + 100]

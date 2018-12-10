@@ -94,7 +94,8 @@ architecture arch of id_stage is
         q_predicted_address,
         q_fallback_address,
         d_read_data_1, q_read_data_1,
-        d_read_data_2, q_read_data_2
+        d_read_data_2, q_read_data_2,
+        d_se_immediate, q_se_immediate
     : std_logic_vector(31 downto 0);
     signal
         d_read_address_1, q_read_address_1,
@@ -122,6 +123,8 @@ architecture arch of id_stage is
 
     -- Declare constants
     constant undef : std_logic_vector(5 downto 0) := "XXXXXX";
+    constant zero : std_logic_vector(15 downto 0) := (others => '0');
+    constant ffff : std_logic_vector(15 downto 0) := (others => '1');
 begin
     -- Get opcode
     opcode <= undef when branch_execute='1' else instruction(31 downto 26);
@@ -186,8 +189,9 @@ begin
             rvalue2 => d_read_data_2
         );
 
-
     -- SE Immediate
+    d_se_immediate <= ffff & instruction(15 downto 0) when instruction(15)='1' else
+                      zero & instruction(15 downto 0);
 
     -- Commit
     q_pc <= pc_in when clk'event and clk='1' else q_pc;
@@ -207,6 +211,7 @@ begin
     q_write_address <= d_write_address when clk'event and clk='1' else q_write_address;
     q_read_data_1 <= d_read_data_1 when clk'event and clk='1' else q_read_data_1;
     q_read_data_2 <= d_read_data_2 when clk'event and clk='1' else q_read_data_2;
+    q_se_immediate <= d_se_immediate when clk'event and clk='1' else q_se_immediate;
     q_funct <= d_funct when clk'event and clk='1' else q_funct;
 
     -- Output
@@ -228,4 +233,5 @@ begin
     ID_funct <= q_funct;
     ID_read_data_1 <= q_read_data_1;
     ID_read_data_2 <= q_read_data_2;
+    ID_se_immediate <= q_se_immediate;
 end architecture;
