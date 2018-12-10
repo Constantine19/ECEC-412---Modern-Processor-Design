@@ -8,3 +8,7 @@
         - Finish/Test Handle Branch
     - Finish/Test MEM Stage
     - Finish/Test Global Branch Control
+    - Update helper package
+        - Add word, byte, address data types
+        - Add sign_extend function
+        - Add register procedure
