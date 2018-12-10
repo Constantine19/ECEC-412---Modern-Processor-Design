@@ -80,36 +80,46 @@ architecture arch of cpu is
     end component id_stage;
     component ex_stage
         port (
-            clk               : in  std_logic;
+            clk                  : in  std_logic;
 
             -- Branch handling
-            pc                : in  std_logic_vector(31 downto 0);
-            predicted_address : in  std_logic_vector(31 downto 0);
-            fallback_address  : in  std_logic_vector(31 downto 0);
+            pc                   : in  std_logic_vector(31 downto 0);
+            predicted_address    : in  std_logic_vector(31 downto 0);
+            fallback_address     : in  std_logic_vector(31 downto 0);
 
             -- Signals
-            ID_aluop          : in  std_logic_vector(2 downto 0);
+            ID_aluop             : in  std_logic_vector(2 downto 0);
             ID_alusrc, ID_branch,
             ID_memwrite, ID_mem2reg,
             ID_regwrite,
             ID_stackop,
-            ID_stackpushpop   : in  std_logic;
+            ID_stackpushpop      : in  std_logic;
 
             -- Data
             ID_read_data_1,
-            ID_read_data_2    : in  std_logic_vector(31 downto 0);
+            ID_read_data_2       : in  std_logic_vector(31 downto 0);
             ID_read_address_1,
-            ID_read_address_2 : in  std_logic_vector(4 downto 0);
-            ID_se_immediate   : in  std_logic_vector(31 downto 0);
-            ID_funct          : in  std_logic_vector(5 downto 0);
-            ID_write_address  : in  std_logic_vector(4 downto 0);
+            ID_read_address_2    : in  std_logic_vector(4 downto 0);
+            ID_se_immediate      : in  std_logic_vector(31 downto 0);
+            ID_funct             : in  std_logic_vector(5 downto 0);
+            ID_write_address     : in  std_logic_vector(4 downto 0);
+            EX_write_address_in  : in std_logic_vector(4 downto 0);
+            MEM_write_address    : in std_logic_vector(4 downto 0);
+            EX_write_data_in     : in std_logic_vector(31 downto 0);
+            MEM_write_data       : in std_logic_vector(31 downto 0);
+
+            -- Branch handling
+            branch_execute       : out std_logic;
+            branch_address       : out std_logic_vector(31 downto 0);
 
             -- Output signals
             EX_memwrite, EX_mem2reg,
-            EX_regwrite       : in std_logic;
-            EX_alu_result     : out std_logic_vector(31 downto 0);
-            EX_write_data     : out std_logic_vector(31 downto 0);
-            EX_write_address  : out std_logic_vector(4 downto 0)
+            EX_regwrite          : in std_logic;
+
+            -- Output Data
+            EX_alu_result        : out std_logic_vector(31 downto 0);
+            EX_write_data_out    : out std_logic_vector(31 downto 0);
+            EX_write_address_out : out std_logic_vector(4 downto 0)
         );
     end component ex_stage;
 
@@ -131,8 +141,10 @@ architecture arch of cpu is
         ID_se_immediate,
         ID_read_data_1,
         ID_read_data_2,
+        EX_branch_address,
         EX_alu_result,
         EX_write_data,
+        MEM_write_data,
         WB_result
     : std_logic_vector(31 downto 0);
     signal
@@ -143,6 +155,7 @@ architecture arch of cpu is
         ID_read_address_2,
         ID_write_address,
         EX_write_address,
+        MEM_write_address,
         WB_write_address
     : std_logic_vector(4 downto 0);
     signal
@@ -256,41 +269,49 @@ begin
         -- Branch
     ex_stage_i : ex_stage
         port map (
-            clk               => clk,
+            clk                  => clk,
 
             -- Branch Handling
-            pc                => ID_pc,
-            predicted_address => ID_predicted_address,
-            fallback_address  => ID_fallback_address,
+            pc                   => ID_pc,
+            predicted_address    => ID_predicted_address,
+            fallback_address     => ID_fallback_address,
 
             -- Signals
-            ID_aluop          => ID_aluop,
-            ID_alusrc         => ID_alusrc,
-            ID_branch         => ID_branch,
-            ID_memwrite       => ID_memwrite,
-            ID_mem2reg        => ID_mem2reg,
-            ID_regwrite       => ID_regwrite,
-            ID_stackop        => ID_stackop,
-            ID_stackpushpop   => ID_stackpushpop,
+            ID_aluop             => ID_aluop,
+            ID_alusrc            => ID_alusrc,
+            ID_branch            => ID_branch,
+            ID_memwrite          => ID_memwrite,
+            ID_mem2reg           => ID_mem2reg,
+            ID_regwrite          => ID_regwrite,
+            ID_stackop           => ID_stackop,
+            ID_stackpushpop      => ID_stackpushpop,
 
             -- Data
-            ID_read_data_1    => ID_read_data_1,
-            ID_read_data_2    => ID_read_data_2,
-            ID_read_address_1 => ID_read_address_1,
-            ID_read_address_2 => ID_read_address_2,
-            ID_se_immediate   => ID_se_immediate,
-            ID_funct          => ID_funct,
-            ID_write_address  => ID_write_address,
+            ID_read_data_1       => ID_read_data_1,
+            ID_read_data_2       => ID_read_data_2,
+            ID_read_address_1    => ID_read_address_1,
+            ID_read_address_2    => ID_read_address_2,
+            ID_se_immediate      => ID_se_immediate,
+            ID_funct             => ID_funct,
+            ID_write_address     => ID_write_address,
+            EX_write_address_in  => EX_write_address,
+            MEM_write_address    => MEM_write_address,
+            EX_write_data_in     => EX_write_data,
+            MEM_write_data       => MEM_write_data,
+
+            -- Branch handling
+            branch_execute       => EX_branch_execute,
+            branch_address       => EX_branch_address,
 
             -- Output Signals
-            EX_memwrite       => EX_memwrite,
-            EX_mem2reg        => EX_mem2reg,
-            EX_regwrite       => EX_regwrite,
+            EX_memwrite          => EX_memwrite,
+            EX_mem2reg           => EX_mem2reg,
+            EX_regwrite          => EX_regwrite,
 
             -- Output Data
-            EX_alu_result     => EX_alu_result,
-            EX_write_data     => EX_write_data,
-            EX_write_address  => EX_write_address
+            EX_alu_result        => EX_alu_result,
+            EX_write_data_out    => EX_write_data,
+            EX_write_address_out => EX_write_address
         );
 
 

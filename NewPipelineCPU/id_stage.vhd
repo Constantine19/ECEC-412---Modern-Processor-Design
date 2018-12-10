@@ -5,6 +5,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+-- ID Stage entity
 entity id_stage is
     port (
         clk: in std_logic;
@@ -49,6 +50,7 @@ entity id_stage is
     );
 end entity;
 
+-- ID Stage architecture
 architecture arch of id_stage is
     -- Declare components
     component control
@@ -100,7 +102,7 @@ architecture arch of id_stage is
     signal
         d_read_address_1, q_read_address_1,
         d_read_address_2, q_read_address_2,
-        d_write_address,  q_write_address
+        d_write_address, q_write_address
     : std_logic_vector(4 downto 0);
     signal
         opcode, d_funct, q_funct
@@ -167,7 +169,6 @@ begin
             jump_execute      => jump_execute
         );
 
-
     -- Read Registers
     register_table_i : register_table
         generic map (
@@ -188,8 +189,9 @@ begin
         );
 
     -- SE Immediate
-    d_se_immediate <= ffff & instruction(15 downto 0) when instruction(15)='1' else
-                      zero & instruction(15 downto 0);
+    d_se_immediate <=
+        ffff & instruction(15 downto 0) when instruction(15)='1' else
+        zero & instruction(15 downto 0);
 
     -- Commit
     q_pc <= pc_in when clk'event and clk='1' else q_pc;

@@ -40,6 +40,15 @@ add wave -group "ID Stage" -color "Yellow" -label "Funct" "sim:/cpu/ID_funct"
 add wave -group "ID Stage" -color "Yellow" -label "Read Address 1" "sim:/cpu/ID_read_address_1"
 add wave -group "ID Stage" -color "Yellow" -label "Read Address 2" "sim:/cpu/ID_read_address_2"
 add wave -group "ID Stage" -color "Yellow" -label "Write Address" "sim:/cpu/ID_write_address"
+# EX Stage
+add wave -group "EX Stage" -color "Green" -label "Branch Execute" "sim:/cpu/EX_branch_execute"
+add wave -group "EX Stage" -color "Green" -label "Branch Address" "sim:/cpu/EX_branch_address"
+add wave -group "EX Stage" -color "Green" -label "MemWrite" "sim:/cpu/EX_alu_result"
+add wave -group "EX Stage" -color "Green" -label "Mem2Reg" "sim:/cpu/EX_mem2reg"
+add wave -group "EX Stage" -color "Green" -label "RegWrite" "sim:/cpu/EX_regwrite"
+add wave -group "EX Stage" -color "Green" -label "ALU Result" "sim:/cpu/EX_alu_result"
+add wave -group "EX Stage" -color "Green" -label "Write Data" "sim:/cpu/EX_write_data"
+add wave -group "EX Stage" -color "Green" -label "Write Address" "sim:/cpu/EX_write_address"
 
 # Clear instruction memory
 mem load -filltype value -filldata {0} "sim:/cpu/if_stage_i/instruction_memory/memory"
